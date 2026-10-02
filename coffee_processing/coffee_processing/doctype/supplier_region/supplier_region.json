@@ -1,0 +1,71 @@
+{
+  "doctype": "DocType",
+  "name": "Supplier Region",
+  "module": "Coffee Processing",
+  "autoname": "field:region_name",
+  "engine": "InnoDB",
+  "field_order": [
+    "region_name",
+    "country",
+    "city",
+    "altitude_m",
+    "active"
+  ],
+  "fields": [
+    {
+      "fieldname": "region_name",
+      "fieldtype": "Data",
+      "label": "اسم المنطقة",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "country",
+      "fieldtype": "Link",
+      "label": "الدولة",
+      "options": "Country",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "city",
+      "fieldtype": "Data",
+      "label": "المدينة",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "altitude_m",
+      "fieldtype": "Float",
+      "label": "الارتفاع (متر)",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "active",
+      "fieldtype": "Check",
+      "label": "نشط",
+      "default": "1",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "export": 1,
+      "report": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "allow_rename": 1,
+  "track_changes": 1
+}

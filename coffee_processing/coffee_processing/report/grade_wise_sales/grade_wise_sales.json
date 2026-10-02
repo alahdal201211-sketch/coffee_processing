@@ -1,0 +1,57 @@
+{
+    "doctype": "Report",
+    "report_name": "Grade-wise Sales Report",
+    "ref_doctype": "Coffee Batch",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Coffee Processing",
+    "query": "SELECT cb.coffee_type, cb.coffee_grade, cb.custom_item_code, SUM(sii.qty) AS qty, SUM(sii.amount) AS amount, si.company, si.branch FROM `tabSales Invoice Item` sii INNER JOIN `tabSales Invoice` si ON si.name = sii.parent INNER JOIN `tabCoffee Batch` cb ON cb.custom_item_code = sii.item_code WHERE si.docstatus = 1 AND cb.is_grade_batch = 1 GROUP BY cb.coffee_type, cb.coffee_grade, cb.custom_item_code, si.company, si.branch ORDER BY cb.coffee_type, cb.coffee_grade",
+    "columns": [
+        {
+            "label": "Coffee Type",
+            "fieldname": "coffee_type",
+            "fieldtype": "Data",
+            "width": 120
+        },
+        {
+            "label": "Grade",
+            "fieldname": "coffee_grade",
+            "fieldtype": "Link",
+            "options": "Coffee Grade Master",
+            "width": 120
+        },
+        {
+            "label": "Item Code",
+            "fieldname": "custom_item_code",
+            "fieldtype": "Data",
+            "width": 150
+        },
+        {
+            "label": "Qty Sold",
+            "fieldname": "qty",
+            "fieldtype": "Float",
+            "width": 100
+        },
+        {
+            "label": "Revenue",
+            "fieldname": "amount",
+            "fieldtype": "Currency",
+            "width": 120
+        },
+        {
+            "label": "Company",
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "options": "Company",
+            "width": 120
+        },
+        {
+            "label": "Branch",
+            "fieldname": "branch",
+            "fieldtype": "Link",
+            "options": "Branch",
+            "width": 100
+        }
+    ],
+    "name": "Grade-wise Sales Report"
+}

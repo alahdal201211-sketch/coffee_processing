@@ -1,0 +1,7 @@
+[
+  {
+    "uom_name": "Kg",
+    "enabled": 1,
+    "must_be_whole_number": 0
+  }
+]

@@ -1,0 +1,41 @@
+{
+    "doctype": "DocType",
+    "name": "Coffee Process Route Step",
+    "module": "Coffee Processing",
+    "engine": "InnoDB",
+    "istable": 1,
+    "field_order": [
+        "sequence", "operation", "step_name", "required", "allow_skip_if_optional",
+        "column_break_1", "requires_weight", "requires_moisture", "requires_quality",
+        "requires_sample", "requires_approval", "requires_daily_monitoring",
+        "column_break_2", "allow_reprocessing", "allow_partial",
+        "allow_multiple_inputs", "allow_multiple_outputs",
+        "column_break_3", "require_assignment", "required_role",
+        "minimum_days", "maximum_days", "step_cost_center"
+    ],
+    "fields": [
+        {"fieldname": "sequence", "fieldtype": "Int", "label": "التسلسل", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "operation", "fieldtype": "Link", "label": "العملية", "options": "Coffee Operation Master", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "step_name", "fieldtype": "Data", "label": "اسم الخطوة", "fetch_from": "operation.operation_name_ar", "read_only": 1, "in_list_view": 1},
+        {"fieldname": "required", "fieldtype": "Check", "label": "مطلوبة", "default": "1", "in_list_view": 1},
+        {"fieldname": "allow_skip_if_optional", "fieldtype": "Check", "label": "يسمح بتخطيها", "default": "1", "depends_on": "eval:!doc.required"},
+        {"fieldname": "column_break_1", "fieldtype": "Column Break"},
+        {"fieldname": "requires_weight", "fieldtype": "Check", "label": "يتطلب وزن", "fetch_from": "operation.requires_weight", "read_only": 1},
+        {"fieldname": "requires_moisture", "fieldtype": "Check", "label": "يتطلب رطوبة", "fetch_from": "operation.requires_moisture", "read_only": 1},
+        {"fieldname": "requires_quality", "fieldtype": "Check", "label": "يتطلب فحص جودة", "fetch_from": "operation.requires_quality", "read_only": 1},
+        {"fieldname": "requires_sample", "fieldtype": "Check", "label": "يتطلب عينة", "fetch_from": "operation.requires_sample", "read_only": 1},
+        {"fieldname": "requires_approval", "fieldtype": "Check", "label": "يتطلب موافقة", "fetch_from": "operation.requires_approval", "read_only": 1},
+        {"fieldname": "requires_daily_monitoring", "fieldtype": "Check", "label": "يتطلب مراقبة يومية", "fetch_from": "operation.requires_daily_monitoring", "read_only": 1},
+        {"fieldname": "column_break_2", "fieldtype": "Column Break"},
+        {"fieldname": "allow_reprocessing", "fieldtype": "Check", "label": "يسمح بإعادة المعالجة", "fetch_from": "operation.allow_reprocessing", "read_only": 1},
+        {"fieldname": "allow_partial", "fieldtype": "Check", "label": "يسمح بالمعالجة الجزئية", "fetch_from": "operation.allow_partial_quantity", "read_only": 1},
+        {"fieldname": "allow_multiple_inputs", "fieldtype": "Check", "label": "يسمح بمدخلات متعددة", "fetch_from": "operation.allow_multiple_inputs", "read_only": 1},
+        {"fieldname": "allow_multiple_outputs", "fieldtype": "Check", "label": "يسمح بمخرجات متعددة", "fetch_from": "operation.allow_multiple_outputs", "read_only": 1},
+        {"fieldname": "column_break_3", "fieldtype": "Column Break"},
+        {"fieldname": "require_assignment", "fieldtype": "Check", "label": "يتطلب تعيين", "fetch_from": "operation.require_assignment", "read_only": 1},
+        {"fieldname": "required_role", "fieldtype": "Link", "label": "الدور المطلوب", "options": "Role", "fetch_from": "operation.required_role", "read_only": 1},
+        {"fieldname": "minimum_days", "fieldtype": "Int", "label": "الحد الأدنى (أيام)"},
+        {"fieldname": "maximum_days", "fieldtype": "Int", "label": "الحد الأقصى (أيام)"},
+        {"fieldname": "step_cost_center", "fieldtype": "Link", "label": "مركز التكلفة", "options": "Cost Center", "fetch_from": "operation.default_cost_center", "read_only": 1}
+    ]
+}

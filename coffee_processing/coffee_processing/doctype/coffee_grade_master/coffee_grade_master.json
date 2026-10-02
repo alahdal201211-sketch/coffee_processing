@@ -1,0 +1,46 @@
+{
+    "doctype": "DocType",
+    "name": "Coffee Grade Master",
+    "module": "Coffee Processing",
+    "autoname": "field:grade_code",
+    "engine": "InnoDB",
+    "field_order": [
+        "grade_code", "grade_name_ar", "grade_name_en", "grade_number",
+        "column_break_1", "sequence", "sort_order", "active",
+        "section_company", "company", "branch",
+        "section_items", "specialty_item_code", "commercial_item_code",
+        "column_break_2", "specialty_warehouse", "commercial_warehouse",
+        "cost_center", "description"
+    ],
+    "fields": [
+        {"fieldname": "grade_code", "fieldtype": "Data", "label": "كود الدرجة", "reqd": 1, "unique": 1, "in_list_view": 1},
+        {"fieldname": "grade_name_ar", "fieldtype": "Data", "label": "اسم الدرجة (عربي)", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "grade_name_en", "fieldtype": "Data", "label": "اسم الدرجة (إنجليزي)", "in_list_view": 1},
+        {"fieldname": "grade_number", "fieldtype": "Int", "label": "رقم الدرجة", "in_list_view": 1},
+        {"fieldname": "column_break_1", "fieldtype": "Column Break"},
+        {"fieldname": "sequence", "fieldtype": "Int", "label": "التسلسل", "in_list_view": 1},
+        {"fieldname": "sort_order", "fieldtype": "Int", "label": "ترتيب العرض", "default": "0"},
+        {"fieldname": "active", "fieldtype": "Check", "label": "نشط", "default": "1", "in_standard_filter": 1},
+
+        {"fieldname": "section_company", "fieldtype": "Section Break", "label": "الشركة والفرع"},
+        {"fieldname": "company", "fieldtype": "Link", "label": "الشركة", "options": "Company", "reqd": 1, "in_standard_filter": 1},
+        {"fieldname": "branch", "fieldtype": "Link", "label": "الفرع", "options": "Branch", "in_standard_filter": 1},
+
+        {"fieldname": "section_items", "fieldtype": "Section Break", "label": "أكواد الأصناف والمواقع"},
+        {"fieldname": "specialty_item_code", "fieldtype": "Data", "label": "كود الصنف المختص", "description": "مثال: CLEAN-SPECIALTY-G14"},
+        {"fieldname": "commercial_item_code", "fieldtype": "Data", "label": "كود الصنف التجاري", "description": "مثال: CLEAN-COMMERCIAL-G14"},
+        {"fieldname": "column_break_2", "fieldtype": "Column Break"},
+        {"fieldname": "specialty_warehouse", "fieldtype": "Link", "label": "مخزن متخصص", "options": "Warehouse"},
+        {"fieldname": "commercial_warehouse", "fieldtype": "Link", "label": "مخزن تجاري", "options": "Warehouse"},
+        {"fieldname": "cost_center", "fieldtype": "Link", "label": "مركز التكلفة", "options": "Cost Center"},
+        {"fieldname": "description", "fieldtype": "Small Text", "label": "الوصف"}
+    ],
+    "permissions": [
+        {"role": "Coffee Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1, "export": 1, "share": 1, "print": 1, "email": 1},
+        {"role": "Coffee Grading User", "read": 1, "report": 1, "print": 1}
+    ],
+    "track_changes": 1,
+    "title_field": "grade_name_ar",
+    "sort_field": "sort_order",
+    "sort_order": "ASC"
+}

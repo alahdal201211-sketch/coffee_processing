@@ -1,0 +1,55 @@
+{
+    "doctype": "Report",
+    "report_name": "Grade-wise Profitability",
+    "ref_doctype": "Coffee Batch",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Coffee Processing",
+    "query": "SELECT cb.coffee_type, cb.coffee_grade, SUM(sii.qty) AS qty_sold, SUM(sii.amount) AS revenue, SUM(sii.qty * cb.cost_per_kg) AS cogs, SUM(sii.amount) - SUM(sii.qty * cb.cost_per_kg) AS gross_profit, CASE WHEN SUM(sii.amount) > 0 THEN (SUM(sii.amount) - SUM(sii.qty * cb.cost_per_kg)) / SUM(sii.amount) * 100 ELSE 0 END AS profit_margin_pct FROM `tabSales Invoice Item` sii INNER JOIN `tabSales Invoice` si ON si.name = sii.parent INNER JOIN `tabCoffee Batch` cb ON cb.custom_item_code = sii.item_code WHERE si.docstatus = 1 AND cb.is_grade_batch = 1 GROUP BY cb.coffee_type, cb.coffee_grade ORDER BY gross_profit DESC",
+    "columns": [
+        {
+            "label": "Coffee Type",
+            "fieldname": "coffee_type",
+            "fieldtype": "Data",
+            "width": 120
+        },
+        {
+            "label": "Grade",
+            "fieldname": "coffee_grade",
+            "fieldtype": "Link",
+            "options": "Coffee Grade Master",
+            "width": 120
+        },
+        {
+            "label": "Qty Sold",
+            "fieldname": "qty_sold",
+            "fieldtype": "Float",
+            "width": 100
+        },
+        {
+            "label": "Revenue",
+            "fieldname": "revenue",
+            "fieldtype": "Currency",
+            "width": 120
+        },
+        {
+            "label": "COGS",
+            "fieldname": "cogs",
+            "fieldtype": "Currency",
+            "width": 120
+        },
+        {
+            "label": "Gross Profit",
+            "fieldname": "gross_profit",
+            "fieldtype": "Currency",
+            "width": 120
+        },
+        {
+            "label": "Margin %",
+            "fieldname": "profit_margin_pct",
+            "fieldtype": "Percent",
+            "width": 100
+        }
+    ],
+    "name": "Grade-wise Profitability Report"
+}

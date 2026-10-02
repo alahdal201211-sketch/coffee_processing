@@ -1,0 +1,61 @@
+{
+  "doctype": "DocType",
+  "name": "Coffee Operation Cost",
+  "module": "Coffee Processing",
+  "autoname": null,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "istable": 1,
+  "fields": [
+    {
+      "fieldname": "cost_type",
+      "fieldtype": "Select",
+      "label": "نوع التكلفة",
+      "options": "Labor\nMachine\nEnergy\nMaterial\nWater\nService\nTransport\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Data",
+      "label": "الوصف"
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "الكمية"
+    },
+    {
+      "fieldname": "rate",
+      "fieldtype": "Currency",
+      "label": "المعدل"
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "المبلغ"
+    },
+    {
+      "fieldname": "account",
+      "fieldtype": "Link",
+      "label": "الحساب",
+      "options": "Account"
+    },
+    {
+      "fieldname": "cost_center",
+      "fieldtype": "Link",
+      "label": "مركز التكلفة",
+      "options": "Cost Center"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    }
+  ]
+}

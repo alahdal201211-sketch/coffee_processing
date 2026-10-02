@@ -1,0 +1,117 @@
+[
+  {
+    "item_group_name": "البن",
+    "parent_item_group": "كل مجموعات الأصناف",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "05 - منتجات ثانوية",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "01 - مواد خام",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02 - تحت المعالجة",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "03 - بن مختص",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02.03 - بن مجفف",
+    "parent_item_group": "02 - تحت المعالجة",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "03.14 - مختص درجة 14",
+    "parent_item_group": "03 - بن مختص",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "07 - مواد التعبئة",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "04 - بن تجاري",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "04.16 - تجاري درجة 16",
+    "parent_item_group": "04 - بن تجاري",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "03.17 - مختص درجة 17",
+    "parent_item_group": "03 - بن مختص",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "04.17 - تجاري درجة 17",
+    "parent_item_group": "04 - بن تجاري",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "06 - عيوب ومرفوضات",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02.04 - بن مقشر",
+    "parent_item_group": "02 - تحت المعالجة",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02.02 - بن مخمر",
+    "parent_item_group": "02 - تحت المعالجة",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "08 - منتجات معبأة",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02.05 - بن نظيف",
+    "parent_item_group": "02 - تحت المعالجة",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "03.16 - مختص درجة 16",
+    "parent_item_group": "03 - بن مختص",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "02.01 - بن أحمر",
+    "parent_item_group": "02 - تحت المعالجة",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "04.14 - تجاري درجة 14",
+    "parent_item_group": "04 - بن تجاري",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "09 - مواد خدمة التقشير",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "10 - عينات التذوق",
+    "parent_item_group": "البن",
+    "is_group": 1
+  },
+  {
+    "item_group_name": "11 - خلطات البن",
+    "parent_item_group": "البن",
+    "is_group": 1
+  }
+]

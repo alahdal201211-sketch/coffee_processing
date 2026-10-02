@@ -1,0 +1,90 @@
+[
+  {
+    "name": "الاهدل للبن - ALC",
+    "cost_center_name": "الاهدل للبن",
+    "parent_cost_center": null,
+    "company": "الاهدل للبن",
+    "is_group": 1,
+    "disabled": 0
+  },
+  {
+    "name": "التقشير - البن - ALC - ALC",
+    "cost_center_name": "التقشير - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "التجفيف - البن - ALC - ALC",
+    "cost_center_name": "التجفيف - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "رئيسي - ALC",
+    "cost_center_name": "رئيسي",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "التذوق والتقييم - البن - ALC - ALC",
+    "cost_center_name": "التذوق والتقييم - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "التخمير - البن - ALC - ALC",
+    "cost_center_name": "التخمير - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "الخلط - البن - ALC - ALC",
+    "cost_center_name": "الخلط - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "التصنيف - البن - ALC - ALC",
+    "cost_center_name": "التصنيف - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "استلام البن - البن - ALC - ALC",
+    "cost_center_name": "استلام البن - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "الفرز - البن - ALC - ALC",
+    "cost_center_name": "الفرز - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  },
+  {
+    "name": "التعبئة - البن - ALC - ALC",
+    "cost_center_name": "التعبئة - البن - ALC",
+    "parent_cost_center": "الاهدل للبن - ALC",
+    "company": "الاهدل للبن",
+    "is_group": 0,
+    "disabled": 0
+  }
+]

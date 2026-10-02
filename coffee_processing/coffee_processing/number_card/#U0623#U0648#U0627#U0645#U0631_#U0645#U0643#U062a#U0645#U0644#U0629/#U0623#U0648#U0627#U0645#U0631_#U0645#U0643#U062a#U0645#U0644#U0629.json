@@ -1,0 +1,23 @@
+{
+ "creation": "2026-09-21 23:14:32.780220",
+ "currency": "YER",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Coffee Process Order",
+ "filters_json": "[\n [\n  \"Coffee Process Order\",\n  \"status\",\n  \"=\",\n  \"Completed\"\n ]\n]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "\u0623\u0648\u0627\u0645\u0631 \u0645\u0643\u062a\u0645\u0644\u0629",
+ "modified": "2026-09-22 21:05:47.465297",
+ "modified_by": "Administrator",
+ "module": "Coffee Processing",
+ "name": "\u0623\u0648\u0627\u0645\u0631 \u0645\u0643\u062a\u0645\u0644\u0629",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Daily",
+ "type": "Document Type"
+}

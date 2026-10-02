@@ -1,0 +1,236 @@
+[
+  {
+    "name": "مستودع البن الجاهز للبيع - الاهدل للبن - ALC",
+    "warehouse_name": "مستودع البن الجاهز للبيع - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": null,
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مستودع البن المعالج - الاهدل للبن - ALC",
+    "warehouse_name": "مستودع البن المعالج - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": null,
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مستودع البن الخام - الاهدل للبن - ALC",
+    "warehouse_name": "مستودع البن الخام - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": null,
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "جميع المستودعات - ALC",
+    "warehouse_name": "جميع المستودعات",
+    "disabled": 1,
+    "parent_warehouse": null,
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مخازن - ALC",
+    "warehouse_name": "مخازن",
+    "disabled": 0,
+    "parent_warehouse": "جميع المستودعات - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مخازن البن - الاهدل للبن - ALC",
+    "warehouse_name": "مخازن البن - الاهدل للبن",
+    "disabled": 1,
+    "parent_warehouse": "جميع المستودعات - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مخازن البن - الاهدل للبن - منتجات ثانوية - ALC",
+    "warehouse_name": "مخازن البن - الاهدل للبن - منتجات ثانوية",
+    "disabled": 1,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CGW - مخزن البن المصنف - الاهدل للبن - ALC",
+    "warehouse_name": "CGW - مخزن البن المصنف - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "مخزون البن المنقى والمصنف - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CRW - مخزن البن الخام - الاهدل للبن - ALC",
+    "warehouse_name": "CRW - مخزن البن الخام - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "البن الخام - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CBUW - مخزن البعورة - الاهدل للبن - ALC",
+    "warehouse_name": "CBUW - مخزن البعورة - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - منتجات ثانوية - ALC",
+    "is_group": 0,
+    "account": "مخزون البعورة - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "التقدم في العمل - ALC",
+    "warehouse_name": "التقدم في العمل",
+    "disabled": 0,
+    "parent_warehouse": "جميع المستودعات - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CDAW - مخزن الدقة - الاهدل للبن - ALC",
+    "warehouse_name": "CDAW - مخزن الدقة - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - منتجات ثانوية - ALC",
+    "is_group": 0,
+    "account": "مخزون الدقة - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "البضائع في العبور - ALC",
+    "warehouse_name": "البضائع في العبور",
+    "disabled": 0,
+    "parent_warehouse": "جميع المستودعات - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CFGC - مخزن البن التجاري الجاهز - الاهدل للبن - ALC",
+    "warehouse_name": "CFGC - مخزن البن التجاري الجاهز - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "مخزون البن التجاري الجاهز - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CHSW - مخزن القشر - الاهدل للبن - ALC",
+    "warehouse_name": "CHSW - مخزن القشر - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - منتجات ثانوية - ALC",
+    "is_group": 0,
+    "account": "مخزون القشر - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "warehouse_name": "مخازن البن - الاهدل للبن - تحت المعالجة",
+    "disabled": 1,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CHW - مخزن التقشير - الاهدل للبن - ALC",
+    "warehouse_name": "CHW - مخزن التقشير - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "is_group": 0,
+    "account": "مخزون البن بعد التقشير - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CPKG - مخزن مواد التعبئة - الاهدل للبن - ALC",
+    "warehouse_name": "CPKG - مخزن مواد التعبئة - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "مخزون مواد التعبئة - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CPW - مخزن المعالجة - الاهدل للبن - ALC",
+    "warehouse_name": "CPW - مخزن المعالجة - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "is_group": 0,
+    "account": "مخزون البن تحت المعالجة - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CBW - مخزن الكسر - الاهدل للبن - ALC",
+    "warehouse_name": "CBW - مخزن الكسر - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - منتجات ثانوية - ALC",
+    "is_group": 0,
+    "account": "مخزون الكسر - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "السلع تامة الصنع - ALC",
+    "warehouse_name": "السلع تامة الصنع",
+    "disabled": 0,
+    "parent_warehouse": "جميع المستودعات - ALC",
+    "is_group": 0,
+    "account": null,
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CDW-DEF - مخزن العيوب - الاهدل للبن - ALC",
+    "warehouse_name": "CDW-DEF - مخزن العيوب - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "مخزون المواد والمنتجات المعيبة - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CFGS - مخزن البن المختص الجاهز - الاهدل للبن - ALC",
+    "warehouse_name": "CFGS - مخزن البن المختص الجاهز - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - ALC",
+    "is_group": 0,
+    "account": "مخزون البن المختص الجاهز - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CCW - مخزن البن النظيف - الاهدل للبن - ALC",
+    "warehouse_name": "CCW - مخزن البن النظيف - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "is_group": 0,
+    "account": "مخزون البن المنقى والمصنف - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CDW - مخزن التجفيف - الاهدل للبن - ALC",
+    "warehouse_name": "CDW - مخزن التجفيف - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "is_group": 0,
+    "account": "مخزون البن بعد التجفيف - ALC",
+    "company": "الاهدل للبن"
+  },
+  {
+    "name": "CFW - مخزن التخمير - الاهدل للبن - ALC",
+    "warehouse_name": "CFW - مخزن التخمير - الاهدل للبن",
+    "disabled": 0,
+    "parent_warehouse": "مخازن البن - الاهدل للبن - تحت المعالجة - ALC",
+    "is_group": 0,
+    "account": "مخزون البن بعد التخمير - ALC",
+    "company": "الاهدل للبن"
+  }
+]

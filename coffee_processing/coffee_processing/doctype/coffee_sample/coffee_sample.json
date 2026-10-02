@@ -1,0 +1,305 @@
+{
+  "doctype": "DocType",
+  "name": "Coffee Sample",
+  "module": "Coffee Processing",
+  "autoname": "format:SAMPLE-{YYYY}-{#####}",
+  "is_submittable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "sample_no",
+    "coffee_batch",
+    "coffee_type",
+    "coffee_grade",
+    "column_break_1",
+    "sample_type",
+    "status",
+    "sample_date",
+    "sample_qty",
+    "uom",
+    "warehouse",
+    "location",
+    "column_break_2",
+    "processing_order",
+    "taken_by",
+    "taken_time",
+    "section_company",
+    "company",
+    "branch",
+    "section_quality",
+    "quality_status",
+    "quality_inspection",
+    "cupping_status",
+    "coffee_cupping",
+    "section_measurements",
+    "moisture_content",
+    "defect_percentage",
+    "screen_size",
+    "column_break_3",
+    "color",
+    "aroma",
+    "flavor",
+    "section_notes",
+    "notes",
+    "erpnext_batch",
+    "sample_stock_entry"
+  ],
+  "fields": [
+    {
+      "fieldname": "sample_no",
+      "fieldtype": "Data",
+      "label": "رقم العينة",
+      "read_only": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "coffee_batch",
+      "fieldtype": "Link",
+      "label": "الدفعة",
+      "options": "Coffee Batch",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "coffee_type",
+      "fieldtype": "Select",
+      "label": "نوع البن",
+      "options": "Specialty\nCommercial\nDefects\nBy-Product\nMixed",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "coffee_grade",
+      "fieldtype": "Link",
+      "label": "الدرجة",
+      "options": "Coffee Grade Master",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "sample_type",
+      "fieldtype": "Select",
+      "label": "نوع العينة",
+      "options": "Pre-Process\nPost-Process\nFinal\nQuality Check",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "الحالة",
+      "options": "Draft\nSubmitted\nCupped\nApproved\nRejected",
+      "default": "Draft",
+      "read_only": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "sample_date",
+      "fieldtype": "Date",
+      "label": "تاريخ العينة",
+      "default": "Today",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sample_qty",
+      "fieldtype": "Float",
+      "label": "كمية العينة",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "uom",
+      "fieldtype": "Data",
+      "label": "الوحدة",
+      "default": "KG"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "المخزن",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "location",
+      "fieldtype": "Data",
+      "label": "الموقع"
+    },
+    {
+      "fieldname": "column_break_2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "processing_order",
+      "fieldtype": "Link",
+      "label": "أمر المعالجة",
+      "options": "Coffee Process Order"
+    },
+    {
+      "fieldname": "taken_by",
+      "fieldtype": "Link",
+      "label": "أخذت بواسطة",
+      "options": "User"
+    },
+    {
+      "fieldname": "taken_time",
+      "fieldtype": "Datetime",
+      "label": "وقت الأخذ"
+    },
+    {
+      "fieldname": "section_company",
+      "fieldtype": "Section Break",
+      "label": "الشركة والفرع"
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "الشركة",
+      "options": "Company",
+      "reqd": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "branch",
+      "fieldtype": "Link",
+      "label": "الفرع",
+      "options": "Branch",
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "section_quality",
+      "fieldtype": "Section Break",
+      "label": "الجودة"
+    },
+    {
+      "fieldname": "quality_status",
+      "fieldtype": "Select",
+      "label": "حالة الجودة",
+      "options": "Pending\nApproved\nRejected\nNot Required",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "quality_inspection",
+      "fieldtype": "Link",
+      "label": "فحص الجودة",
+      "options": "Quality Inspection"
+    },
+    {
+      "fieldname": "cupping_status",
+      "fieldtype": "Select",
+      "label": "حالة التذوق",
+      "options": "Pending\nCupped\nApproved\nRejected\nNot Required",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "coffee_cupping",
+      "fieldtype": "Link",
+      "label": "التذوق",
+      "options": "Coffee Cupping"
+    },
+    {
+      "fieldname": "section_measurements",
+      "fieldtype": "Section Break",
+      "label": "القياسات"
+    },
+    {
+      "fieldname": "moisture_content",
+      "fieldtype": "Float",
+      "label": "محتوى الرطوبة"
+    },
+    {
+      "fieldname": "defect_percentage",
+      "fieldtype": "Float",
+      "label": "نسبة العيوب"
+    },
+    {
+      "fieldname": "screen_size",
+      "fieldtype": "Data",
+      "label": "حجم الغربال"
+    },
+    {
+      "fieldname": "column_break_3",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "color",
+      "fieldtype": "Data",
+      "label": "اللون"
+    },
+    {
+      "fieldname": "aroma",
+      "fieldtype": "Data",
+      "label": "الرائحة"
+    },
+    {
+      "fieldname": "flavor",
+      "fieldtype": "Data",
+      "label": "النكهة"
+    },
+    {
+      "fieldname": "section_notes",
+      "fieldtype": "Section Break",
+      "label": "ملاحظات"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text Editor",
+      "label": "ملاحظات"
+    },
+    {
+      "fieldname": "erpnext_batch",
+      "fieldtype": "Link",
+      "label": "دفعة ERPNext",
+      "options": "Batch",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sample_stock_entry",
+      "fieldtype": "Link",
+      "label": "حركة مخزون العينة",
+      "options": "Stock Entry",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Coffee Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1,
+      "amend": 1,
+      "report": 1,
+      "export": 1,
+      "share": 1,
+      "print": 1,
+      "email": 1
+    },
+    {
+      "role": "Coffee Quality User",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "report": 1,
+      "print": 1
+    },
+    {
+      "role": "Coffee Processing User",
+      "read": 1,
+      "create": 1,
+      "submit": 1,
+      "report": 1,
+      "print": 1
+    }
+  ],
+  "track_changes": 1,
+  "title_field": "sample_no",
+  "sort_field": "creation",
+  "sort_order": "DESC"
+}
