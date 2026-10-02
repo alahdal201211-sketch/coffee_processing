@@ -1,0 +1,70 @@
+{
+ "name": "Coffee Production Plan Step",
+ "doctype": "DocType",
+ "module": "Coffee Processing",
+ "istable": 1,
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sequence",
+  "operation",
+  "planned_qty",
+  "duration_hours",
+  "temperature",
+  "moisture_target",
+  "notes",
+  "process_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "sequence",
+   "fieldtype": "Int",
+   "label": "التسلسل",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "operation",
+   "fieldtype": "Link",
+   "label": "العملية",
+   "options": "Coffee Operation Master",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "planned_qty",
+   "fieldtype": "Float",
+   "label": "الكمية المخططة (كجم)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "duration_hours",
+   "fieldtype": "Float",
+   "label": "المدة (ساعة)"
+  },
+  {
+   "fieldname": "temperature",
+   "fieldtype": "Float",
+   "label": "درجة الحرارة"
+  },
+  {
+   "fieldname": "moisture_target",
+   "fieldtype": "Float",
+   "label": "الرطوبة المستهدفة %"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "process_order",
+   "fieldtype": "Link",
+   "label": "أمر المعالجة الناتج",
+   "options": "Coffee Process Order",
+   "read_only": 1
+  }
+ ],
+ "permissions": []
+}

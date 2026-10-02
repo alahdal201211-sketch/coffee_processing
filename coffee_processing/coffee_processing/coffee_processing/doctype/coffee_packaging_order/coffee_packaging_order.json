@@ -1,0 +1,406 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Packaging Order",
+ "module": "Coffee Processing",
+ "autoname": "PKG-.YYYY.-.#####",
+ "is_submittable": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "packaging_no",
+  "coffee_batch",
+  "operation",
+  "column_break_1",
+  "status",
+  "packaging_date",
+  "priority",
+  "section_company",
+  "company",
+  "branch",
+  "section_input",
+  "input_item_code",
+  "input_qty",
+  "source_warehouse",
+  "input_batch",
+  "uom",
+  "section_packaging",
+  "packaging_type",
+  "packaging_material",
+  "package_size",
+  "column_break_2",
+  "number_of_packages",
+  "section_output",
+  "target_item_code",
+  "target_warehouse",
+  "column_break_3",
+  "output_batch",
+  "output_qty",
+  "output_cost_per_kg",
+  "section_cost",
+  "cost_center",
+  "material_cost",
+  "labor_cost",
+  "machine_cost",
+  "column_break_4",
+  "other_cost",
+  "total_cost",
+  "section_quality",
+  "quality_check_required",
+  "quality_status",
+  "column_break_5",
+  "quality_inspection",
+  "approved_by",
+  "section_execution",
+  "stock_entry",
+  "journal_entry",
+  "column_break_6",
+  "completed_by",
+  "section_notes",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "packaging_no",
+   "fieldtype": "Data",
+   "label": "رقم التعبئة",
+   "read_only": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة",
+   "options": "Coffee Batch",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "operation",
+   "fieldtype": "Link",
+   "label": "العملية",
+   "options": "Coffee Operation Master"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nSubmitted\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "packaging_date",
+   "fieldtype": "Date",
+   "label": "تاريخ التعبئة",
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "الأولوية",
+   "options": "Low\nMedium\nHigh\nUrgent",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_input",
+   "fieldtype": "Section Break",
+   "label": "المدخلات"
+  },
+  {
+   "fieldname": "input_item_code",
+   "fieldtype": "Data",
+   "label": "كود الصنف المدخل",
+   "reqd": 1
+  },
+  {
+   "fieldname": "input_qty",
+   "fieldtype": "Float",
+   "label": "الكمية المدخلة",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن المصدر",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "input_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة المدخلة",
+   "options": "Coffee Batch"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Data",
+   "label": "الوحدة",
+   "default": "KG"
+  },
+  {
+   "fieldname": "section_packaging",
+   "fieldtype": "Section Break",
+   "label": "التعبئة"
+  },
+  {
+   "fieldname": "packaging_type",
+   "fieldtype": "Select",
+   "label": "نوع التعبئة",
+   "options": "GrainPro\nJute Bag\nVacuum Seal\nPaper Bag\nCustom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "packaging_material",
+   "fieldtype": "Data",
+   "label": "مادة التعبئة"
+  },
+  {
+   "fieldname": "package_size",
+   "fieldtype": "Float",
+   "label": "حجم العبوة",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_packages",
+   "fieldtype": "Int",
+   "label": "عدد العبوات",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_output",
+   "fieldtype": "Section Break",
+   "label": "المخرجات"
+  },
+  {
+   "fieldname": "target_item_code",
+   "fieldtype": "Data",
+   "label": "كود الصنف المستهدف",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن المستهدف",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "output_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة الناتجة",
+   "options": "Coffee Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_qty",
+   "fieldtype": "Float",
+   "label": "الكمية الناتجة",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "output_cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "تكلفة الكيلو الناتجة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "التكلفة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center",
+   "reqd": 1
+  },
+  {
+   "fieldname": "material_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة المواد",
+   "default": "0"
+  },
+  {
+   "fieldname": "labor_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة العمالة",
+   "default": "0"
+  },
+  {
+   "fieldname": "machine_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة الآلات",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_cost",
+   "fieldtype": "Currency",
+   "label": "تكاليف أخرى",
+   "default": "0"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "إجمالي التكلفة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_quality",
+   "fieldtype": "Section Break",
+   "label": "الجودة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "quality_check_required",
+   "fieldtype": "Check",
+   "label": "يتطلب فحص جودة"
+  },
+  {
+   "fieldname": "quality_status",
+   "fieldtype": "Select",
+   "label": "حالة الجودة",
+   "options": "Pending\nApproved\nRejected\nNot Required",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quality_inspection",
+   "fieldtype": "Link",
+   "label": "فحص الجودة",
+   "options": "Quality Inspection"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "اعتمد بواسطة",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_execution",
+   "fieldtype": "Section Break",
+   "label": "التنفيذ",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "أكمل بواسطة",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_notes",
+   "fieldtype": "Section Break",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Packaging User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "print": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  }
+ ],
+ "track_changes": 1,
+ "title_field": "packaging_no",
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

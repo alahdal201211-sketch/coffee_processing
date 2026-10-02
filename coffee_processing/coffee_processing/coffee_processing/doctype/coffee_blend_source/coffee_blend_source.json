@@ -1,0 +1,19 @@
+{
+    "doctype": "DocType",
+    "name": "Coffee Blend Source",
+    "module": "Coffee Processing",
+    "engine": "InnoDB",
+    "istable": 1,
+    "field_order": ["source_batch", "item_code", "coffee_grade", "warehouse", "qty", "uom", "rate", "amount", "percentage"],
+    "fields": [
+        {"fieldname": "source_batch", "fieldtype": "Link", "label": "الدفعة المصدر", "options": "Coffee Batch", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "item_code", "fieldtype": "Data", "label": "كود الصنف", "in_list_view": 1},
+        {"fieldname": "coffee_grade", "fieldtype": "Link", "label": "الدرجة", "options": "Coffee Grade Master", "in_list_view": 1},
+        {"fieldname": "warehouse", "fieldtype": "Link", "label": "المخزن", "options": "Warehouse"},
+        {"fieldname": "qty", "fieldtype": "Float", "label": "الكمية", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "uom", "fieldtype": "Data", "label": "الوحدة", "default": "KG"},
+        {"fieldname": "rate", "fieldtype": "Currency", "label": "السعر", "in_list_view": 1},
+        {"fieldname": "amount", "fieldtype": "Currency", "label": "المبلغ", "read_only": 1, "in_list_view": 1},
+        {"fieldname": "percentage", "fieldtype": "Percent", "label": "النسبة %", "read_only": 1, "in_list_view": 1}
+    ]
+}

@@ -1,0 +1,120 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Process Route",
+ "module": "Coffee Processing",
+ "autoname": "field:route_name",
+ "engine": "InnoDB",
+ "field_order": [
+  "route_name",
+  "coffee_type",
+  "column_break_1",
+  "active",
+  "description",
+  "section_company",
+  "company",
+  "branch",
+  "section_steps",
+  "steps"
+ ],
+ "fields": [
+  {
+   "fieldname": "route_name",
+   "fieldtype": "Data",
+   "label": "اسم المسار",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_type",
+   "fieldtype": "Select",
+   "label": "نوع البن",
+   "options": "Specialty\nCommercial\nMixed",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "نشط",
+   "default": "1",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "الوصف"
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_steps",
+   "fieldtype": "Section Break",
+   "label": "الخطوات"
+  },
+  {
+   "fieldname": "steps",
+   "fieldtype": "Table",
+   "label": "الخطوات",
+   "options": "Coffee Process Route Step",
+   "reqd": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Processing User",
+   "read": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1,
+ "title_field": "route_name"
+}

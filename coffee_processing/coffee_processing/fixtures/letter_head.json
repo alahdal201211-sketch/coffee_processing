@@ -1,0 +1,25 @@
+[
+ {
+  "align": null,
+  "content": "<div style=\"direction:rtl;text-align:right;font-family:Tahoma;\">\n<table width=\"100%\">\n<tbody><tr>\n<td width=\"20%\">\n<img src=\"/assets/coffee_processing/images/company_logo.png\" style=\"max-height:80px;\">\n</td>\n<td width=\"80%\" style=\"text-align:center;\">\n<h2>الاهدل للبن</h2>\n<h4>Al-Ahdal Coffee Company</h4>\n<p>معالجة وتصنيع البن اليمني</p>\n</td>\n</tr>\n</tbody></table>\n<hr>\n</div>",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Letter Head",
+  "footer": null,
+  "footer_align": null,
+  "footer_image": null,
+  "footer_image_height": 0.0,
+  "footer_image_width": 0.0,
+  "footer_script": null,
+  "footer_source": null,
+  "header_script": null,
+  "image": null,
+  "image_height": 0.0,
+  "image_width": 0.0,
+  "is_default": 1,
+  "letter_head_name": "ALC Coffee Letter Head",
+  "modified": "2026-10-01 23:19:08.189210",
+  "name": "ALC Coffee Letter Head",
+  "source": "Image"
+ }
+]

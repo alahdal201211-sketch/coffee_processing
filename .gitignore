@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Frappe / Bench generated files
+*.log
+*.tmp
+*.temp
+*.backup
+*.backup_*
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# Database / backups
+*.sql
+*.sql.gz
+*.tar
+*.tar.gz
+
+# Runtime / generated assets
+sites/assets/
+sites/*/private/
+sites/*/logs/
+
+# Test artifacts
+.coverage
+.pytest_cache/
+.mypy_cache/

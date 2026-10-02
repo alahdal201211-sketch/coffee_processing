@@ -1,0 +1,79 @@
+{
+  "name": "Coffee Peeling Service Input",
+  "creation": "2026-09-29 00:00:00",
+  "modified": "2026-09-29 00:00:00",
+  "modified_by": "Administrator",
+  "owner": "Administrator",
+  "docstatus": 0,
+  "idx": 0,
+  "issingle": 0,
+  "is_virtual": 0,
+  "is_tree": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 0,
+  "module": "Coffee Processing",
+  "autoname": null,
+  "engine": "InnoDB",
+  "is_submittable": 0,
+  "custom": 0,
+  "allow_rename": 1,
+  "quick_entry": 0,
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "row_format": "Dynamic",
+  "doctype": "DocType",
+  "fields": [
+    {
+      "fieldname": "coffee_batch",
+      "fieldtype": "Link",
+      "label": "دفعة العميل",
+      "options": "Coffee Batch",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "الصنف",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "مخزن العهدة",
+      "options": "Warehouse",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "الكمية (كجم)",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch ERPNext",
+      "options": "Batch",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "rate",
+      "fieldtype": "Currency",
+      "label": "قيمة التقييم"
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "القيمة",
+      "read_only": 1
+    }
+  ],
+  "permissions": [],
+  "links": []
+}

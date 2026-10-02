@@ -1,0 +1,33 @@
+{
+    "doctype": "DocType",
+    "name": "Coffee Processing Output",
+    "module": "Coffee Processing",
+    "engine": "InnoDB",
+    "istable": 1,
+    "field_order": [
+        "item_code", "item_name", "batch", "new_batch_no", "warehouse",
+        "planned_qty", "actual_qty", "output_type",
+        "coffee_type", "coffee_grade", "uom",
+        "rate", "amount", "cost_allocation_percentage",
+        "is_new_batch", "returned_to_process", "cost_center"
+    ],
+    "fields": [
+        {"fieldname": "item_code", "fieldtype": "Data", "label": "كود الصنف", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "item_name", "fieldtype": "Data", "label": "اسم الصنف", "in_list_view": 1},
+        {"fieldname": "batch", "fieldtype": "Link", "label": "الدفعة الناتجة", "options": "Coffee Batch", "in_list_view": 1},
+        {"fieldname": "new_batch_no", "fieldtype": "Data", "label": "رقم الدفعة الجديدة", "read_only": 1},
+        {"fieldname": "warehouse", "fieldtype": "Link", "label": "المخزن", "options": "Warehouse", "in_list_view": 1},
+        {"fieldname": "planned_qty", "fieldtype": "Float", "label": "الكمية المخططة", "in_list_view": 1},
+        {"fieldname": "actual_qty", "fieldtype": "Float", "label": "الكمية الفعلية", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "output_type", "fieldtype": "Select", "label": "نوع المخرج", "options": "Main\nBy-Product\nDefect\nLoss\nReturn", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "coffee_type", "fieldtype": "Select", "label": "نوع البن", "options": "Specialty\nCommercial\nDefects\nBy-Product", "in_list_view": 1},
+        {"fieldname": "coffee_grade", "fieldtype": "Link", "label": "الدرجة", "options": "Coffee Grade Master", "in_list_view": 1},
+        {"fieldname": "uom", "fieldtype": "Data", "label": "الوحدة", "default": "KG"},
+        {"fieldname": "rate", "fieldtype": "Currency", "label": "السعر", "read_only": 1},
+        {"fieldname": "amount", "fieldtype": "Currency", "label": "المبلغ", "read_only": 1, "in_list_view": 1},
+        {"fieldname": "cost_allocation_percentage", "fieldtype": "Percent", "label": "نسبة توزيع التكلفة %", "depends_on": "eval:parent.cost_allocation_method=='Manual'"},
+        {"fieldname": "is_new_batch", "fieldtype": "Check", "label": "دفعة جديدة", "default": "1"},
+        {"fieldname": "returned_to_process", "fieldtype": "Check", "label": "معادة للمعالجة"},
+        {"fieldname": "cost_center", "fieldtype": "Link", "label": "مركز التكلفة", "options": "Cost Center"}
+    ]
+}

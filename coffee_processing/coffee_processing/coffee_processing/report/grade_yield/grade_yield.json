@@ -1,0 +1,56 @@
+{
+    "doctype": "Report",
+    "report_name": "Grade Yield Report",
+    "ref_doctype": "Coffee Batch",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Coffee Processing",
+    "query": "SELECT parent.name AS parent_batch, parent.custom_item_code AS parent_item, parent.qty AS parent_qty, child.coffee_grade, child.custom_item_code AS grade_item, child.qty AS grade_qty, CASE WHEN parent.qty > 0 THEN child.qty / parent.qty * 100 ELSE 0 END AS yield_pct FROM `tabCoffee Batch` child INNER JOIN `tabCoffee Batch` parent ON child.parent_batch = parent.name WHERE child.is_grade_batch = 1 ORDER BY parent.name, child.coffee_grade",
+    "columns": [
+        {
+            "label": "Parent Batch",
+            "fieldname": "parent_batch",
+            "fieldtype": "Link",
+            "options": "Coffee Batch",
+            "width": 150
+        },
+        {
+            "label": "Parent Item",
+            "fieldname": "parent_item",
+            "fieldtype": "Data",
+            "width": 150
+        },
+        {
+            "label": "Parent Qty",
+            "fieldname": "parent_qty",
+            "fieldtype": "Float",
+            "width": 100
+        },
+        {
+            "label": "Grade",
+            "fieldname": "coffee_grade",
+            "fieldtype": "Link",
+            "options": "Coffee Grade Master",
+            "width": 100
+        },
+        {
+            "label": "Grade Item",
+            "fieldname": "grade_item",
+            "fieldtype": "Data",
+            "width": 150
+        },
+        {
+            "label": "Grade Qty",
+            "fieldname": "grade_qty",
+            "fieldtype": "Float",
+            "width": 100
+        },
+        {
+            "label": "Yield %",
+            "fieldname": "yield_pct",
+            "fieldtype": "Percent",
+            "width": 100
+        }
+    ],
+    "name": "Grade Yield Report"
+}
