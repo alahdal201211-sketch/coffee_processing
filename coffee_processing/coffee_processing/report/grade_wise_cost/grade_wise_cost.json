@@ -1,0 +1,61 @@
+{
+    "doctype": "Report",
+    "report_name": "Grade-wise Cost Report",
+    "ref_doctype": "Coffee Batch",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Coffee Processing",
+    "query": "SELECT cb.coffee_type, cb.coffee_grade, COUNT(*) AS batch_count, SUM(cb.qty) AS total_qty, SUM(cb.total_value) AS total_value, AVG(cb.cost_per_kg) AS avg_cost_per_kg, MIN(cb.cost_per_kg) AS min_cost_per_kg, MAX(cb.cost_per_kg) AS max_cost_per_kg FROM `tabCoffee Batch` cb WHERE cb.is_grade_batch = 1 GROUP BY cb.coffee_type, cb.coffee_grade ORDER BY cb.coffee_type, cb.coffee_grade",
+    "columns": [
+        {
+            "label": "Coffee Type",
+            "fieldname": "coffee_type",
+            "fieldtype": "Data",
+            "width": 120
+        },
+        {
+            "label": "Grade",
+            "fieldname": "coffee_grade",
+            "fieldtype": "Link",
+            "options": "Coffee Grade Master",
+            "width": 120
+        },
+        {
+            "label": "Batch Count",
+            "fieldname": "batch_count",
+            "fieldtype": "Int",
+            "width": 100
+        },
+        {
+            "label": "Total Qty",
+            "fieldname": "total_qty",
+            "fieldtype": "Float",
+            "width": 100
+        },
+        {
+            "label": "Total Value",
+            "fieldname": "total_value",
+            "fieldtype": "Currency",
+            "width": 120
+        },
+        {
+            "label": "Avg Cost/KG",
+            "fieldname": "avg_cost_per_kg",
+            "fieldtype": "Currency",
+            "width": 110
+        },
+        {
+            "label": "Min Cost/KG",
+            "fieldname": "min_cost_per_kg",
+            "fieldtype": "Currency",
+            "width": 110
+        },
+        {
+            "label": "Max Cost/KG",
+            "fieldname": "max_cost_per_kg",
+            "fieldtype": "Currency",
+            "width": 110
+        }
+    ],
+    "name": "Grade-wise Cost Report"
+}

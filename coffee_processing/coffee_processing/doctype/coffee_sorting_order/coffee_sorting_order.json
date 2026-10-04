@@ -1,0 +1,229 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Sorting Order",
+ "module": "Coffee Processing",
+ "autoname": "SORT-.YYYY.-.#####",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "istable": 0,
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "بيانات الفرز"
+  },
+  {
+   "fieldname": "sorting_method",
+   "fieldtype": "Select",
+   "label": "طريقة الفرز",
+   "options": "Manual\nMechanical\nScreening\nOptical\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "machine",
+   "fieldtype": "Data",
+   "label": "آلة الفرز"
+  },
+  {
+   "fieldname": "sorting_grade",
+   "fieldtype": "Link",
+   "label": "الدرجة الناتجة",
+   "options": "Coffee Grade Master"
+  },
+  {
+   "fieldname": "reject_reason",
+   "fieldtype": "Data",
+   "label": "سبب المرفوضات"
+  },
+  {
+   "fieldname": "byproduct_description",
+   "fieldtype": "Data",
+   "label": "وصف الناتج الثانوي"
+  },
+  {
+   "fieldname": "operation_no",
+   "fieldtype": "Data",
+   "label": "رقم العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "تاريخ العملية",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nReady\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "label": "المشغل",
+   "options": "User"
+  },
+  {
+   "fieldname": "previous_operation",
+   "fieldtype": "Data",
+   "label": "العملية السابقة"
+  },
+  {
+   "fieldname": "next_operation",
+   "fieldtype": "Data",
+   "label": "العملية التالية"
+  },
+  {
+   "fieldname": "inputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإدخال",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإخراج",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "input_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المدخلات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المخرجات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loss_qty",
+   "fieldtype": "Float",
+   "label": "الفاقد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "yield_percent",
+   "fieldtype": "Percent",
+   "label": "نسبة الاستخلاص",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "التكاليف"
+  },
+  {
+   "fieldname": "costs",
+   "fieldtype": "Table",
+   "label": "تفاصيل التكاليف",
+   "options": "Coffee Operation Cost"
+  },
+  {
+   "fieldname": "direct_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة المباشرة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overhead_cost",
+   "fieldtype": "Currency",
+   "label": "التكاليف غير المباشرة"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "إجمالي تكلفة العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "تكلفة الكيلو",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "process_order",
+   "fieldtype": "Link",
+   "label": "أمر المعالجة الداخلي",
+   "options": "Coffee Process Order",
+   "hidden": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "حركة المخزون",
+   "options": "Stock Entry"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Sorting User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  }
+ ]
+}

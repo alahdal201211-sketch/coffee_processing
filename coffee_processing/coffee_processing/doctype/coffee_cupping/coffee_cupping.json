@@ -1,0 +1,345 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Cupping",
+ "module": "Coffee Processing",
+ "autoname": "CUP-.YYYY.-.#####",
+ "is_submittable": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cupping_no",
+  "coffee_sample",
+  "coffee_batch",
+  "coffee_grade",
+  "column_break_1",
+  "cupping_date",
+  "status",
+  "cupped_by",
+  "cupping_location",
+  "cupping_time",
+  "session_no",
+  "section_company",
+  "company",
+  "branch",
+  "section_scores",
+  "aroma",
+  "flavor",
+  "acidity",
+  "body",
+  "aftertaste",
+  "balance",
+  "sweetness",
+  "clean_cup",
+  "column_break_2",
+  "total_score",
+  "cupping_result",
+  "final_score",
+  "defects",
+  "defect_score",
+  "section_notes",
+  "flavor_notes",
+  "notes",
+  "section_approval",
+  "approved_by",
+  "approval_date",
+  "rejection_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "cupping_no",
+   "fieldtype": "Data",
+   "label": "رقم التذوق",
+   "read_only": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_sample",
+   "fieldtype": "Link",
+   "label": "العينة",
+   "options": "Coffee Sample",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة",
+   "options": "Coffee Batch",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_grade",
+   "fieldtype": "Link",
+   "label": "الدرجة",
+   "options": "Coffee Grade Master",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cupping_date",
+   "fieldtype": "Date",
+   "label": "تاريخ التذوق",
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nSubmitted\nApproved\nRejected",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cupped_by",
+   "fieldtype": "Link",
+   "label": "تذوق بواسطة",
+   "options": "User"
+  },
+  {
+   "fieldname": "cupping_location",
+   "fieldtype": "Data",
+   "label": "مكان التذوق"
+  },
+  {
+   "fieldname": "cupping_time",
+   "fieldtype": "Time",
+   "label": "وقت التذوق"
+  },
+  {
+   "fieldname": "session_no",
+   "fieldtype": "Data",
+   "label": "رقم الجلسة"
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_scores",
+   "fieldtype": "Section Break",
+   "label": "الدرجات"
+  },
+  {
+   "fieldname": "aroma",
+   "fieldtype": "Float",
+   "label": "الرائحة",
+   "default": "0"
+  },
+  {
+   "fieldname": "flavor",
+   "fieldtype": "Float",
+   "label": "النكهة",
+   "default": "0"
+  },
+  {
+   "fieldname": "acidity",
+   "fieldtype": "Float",
+   "label": "الحموضة",
+   "default": "0"
+  },
+  {
+   "fieldname": "body",
+   "fieldtype": "Float",
+   "label": "الجسم",
+   "default": "0"
+  },
+  {
+   "fieldname": "aftertaste",
+   "fieldtype": "Float",
+   "label": "المذاق المتبقي",
+   "default": "0"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "التوازن",
+   "default": "0"
+  },
+  {
+   "fieldname": "sweetness",
+   "fieldtype": "Float",
+   "label": "الحلاوة",
+   "default": "0"
+  },
+  {
+   "fieldname": "clean_cup",
+   "fieldtype": "Float",
+   "label": "الكأس النظيف",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_score",
+   "fieldtype": "Float",
+   "label": "الدرجة الإجمالية",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cupping_result",
+   "fieldtype": "Select",
+   "label": "نتيجة التذوق",
+   "options": "\nSpecialty\nPremium\nCommercial\nRejected",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "final_score",
+   "fieldtype": "Float",
+   "label": "الدرجة النهائية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "defects",
+   "fieldtype": "Small Text",
+   "label": "العيوب"
+  },
+  {
+   "fieldname": "defect_score",
+   "fieldtype": "Float",
+   "label": "درجة العيوب",
+   "default": "0"
+  },
+  {
+   "fieldname": "section_notes",
+   "fieldtype": "Section Break",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "flavor_notes",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات النكهة"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "section_approval",
+   "fieldtype": "Section Break",
+   "label": "الاعتماد",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "اعتمد بواسطة",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "تاريخ الاعتماد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Small Text",
+   "label": "سبب الرفض"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Quality User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Cupping User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Financial Controller",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1,
+ "title_field": "cupping_no",
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

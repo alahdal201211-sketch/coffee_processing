@@ -1,0 +1,74 @@
+{
+  "doctype": "DocType",
+  "name": "Coffee Operation Batch",
+  "module": "Coffee Processing",
+  "autoname": null,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "istable": 1,
+  "fields": [
+    {
+      "fieldname": "coffee_batch",
+      "fieldtype": "Link",
+      "label": "دفعة البن",
+      "options": "Coffee Batch",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "الصنف",
+      "options": "Item"
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch ERPNext",
+      "options": "Batch"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "المخزن",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "الكمية (كجم)",
+      "reqd": 1
+    },
+    {
+      "fieldname": "rate",
+      "fieldtype": "Currency",
+      "label": "سعر الكيلو"
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "القيمة"
+    },
+    {
+      "fieldname": "role",
+      "fieldtype": "Select",
+      "label": "الدور",
+      "options": "Input\nOutput\nReject\nBy-Product"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "ملاحظات"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    }
+  ]
+}

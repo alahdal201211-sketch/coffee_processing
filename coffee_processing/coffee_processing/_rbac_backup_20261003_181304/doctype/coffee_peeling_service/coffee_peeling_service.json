@@ -1,0 +1,275 @@
+{
+ "name": "Coffee Peeling Service",
+ "creation": "2026-09-29 00:00:00",
+ "modified": "2026-09-29 00:00:00",
+ "modified_by": "Administrator",
+ "owner": "Administrator",
+ "docstatus": 0,
+ "idx": 0,
+ "issingle": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "istable": 0,
+ "editable_grid": 0,
+ "track_changes": 1,
+ "module": "Coffee Processing",
+ "autoname": "HUL-.YYYY.-.#####",
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "custom": 0,
+ "allow_rename": 1,
+ "quick_entry": 0,
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "row_format": "Dynamic",
+ "doctype": "DocType",
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "بيانات خدمة التقشير"
+  },
+  {
+   "fieldname": "service_no",
+   "fieldtype": "Data",
+   "label": "رقم الخدمة",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "service_type",
+   "fieldtype": "Select",
+   "label": "نوع التقشير",
+   "options": "Company Peeling\nCustomer Service",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "العميل",
+   "options": "Customer",
+   "mandatory_depends_on": "eval:doc.service_type==\"Customer Service\"",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "service_date",
+   "fieldtype": "Date",
+   "label": "تاريخ الخدمة",
+   "default": "Today",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nSubmitted\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "machine",
+   "fieldtype": "Data",
+   "label": "آلة التقشير"
+  },
+  {
+   "fieldname": "section_inputs",
+   "fieldtype": "Section Break",
+   "label": "المدخلات"
+  },
+  {
+   "fieldname": "inputs",
+   "fieldtype": "Table",
+   "label": "دفعات البن الداخلة",
+   "options": "Coffee Peeling Service Input",
+   "reqd": 1
+  },
+  {
+   "fieldname": "input_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المدخلات (كجم)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_machine",
+   "fieldtype": "Section Break",
+   "label": "تشغيل الآلة والتكلفة"
+  },
+  {
+   "fieldname": "machine_capacity_tph",
+   "fieldtype": "Float",
+   "label": "طاقة الآلة (طن/ساعة)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_machine_hours",
+   "fieldtype": "Float",
+   "label": "ساعات التشغيل الفعلية"
+  },
+  {
+   "fieldname": "service_item",
+   "fieldtype": "Link",
+   "label": "صنف خدمة التقشير",
+   "options": "Item",
+   "mandatory_depends_on": "eval:doc.service_type==\"Customer Service\""
+  },
+  {
+   "fieldname": "service_rate_per_kg",
+   "fieldtype": "Currency",
+   "label": "أجرة التقشير لكل كجم"
+  },
+  {
+   "fieldname": "service_amount",
+   "fieldtype": "Currency",
+   "label": "قيمة الخدمة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "labor_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة العمالة"
+  },
+  {
+   "fieldname": "machine_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة الآلة"
+  },
+  {
+   "fieldname": "other_cost",
+   "fieldtype": "Currency",
+   "label": "تكاليف أخرى"
+  },
+  {
+   "fieldname": "section_outputs",
+   "fieldtype": "Section Break",
+   "label": "المخرجات"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "مخرجات التقشير",
+   "options": "Coffee Peeling Service Output",
+   "reqd": 1
+  },
+  {
+   "fieldname": "output_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المخرجات (كجم)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loss_qty",
+   "fieldtype": "Float",
+   "label": "الفاقد (كجم)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "yield_percent",
+   "fieldtype": "Percent",
+   "label": "نسبة الاستخلاص %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_execution",
+   "fieldtype": "Section Break",
+   "label": "التنفيذ والفوترة"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "حركة المخزون",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "فاتورة الخدمة",
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payment_entry",
+   "fieldtype": "Link",
+   "label": "السداد",
+   "options": "Payment Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "receipt_reference",
+   "fieldtype": "Data",
+   "label": "مرجع استلام بن العميل"
+  },
+  {
+   "fieldname": "delivery_reference",
+   "fieldtype": "Data",
+   "label": "مرجع تسليم الناتج"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Hulling User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  }
+ ],
+ "links": []
+}

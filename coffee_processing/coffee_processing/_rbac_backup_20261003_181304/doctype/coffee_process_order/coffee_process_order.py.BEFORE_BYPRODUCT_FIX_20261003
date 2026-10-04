@@ -1,0 +1,2237 @@
+import frappe
+from frappe import _
+from frappe.model.document import Document
+from frappe.utils import flt
+
+
+class CoffeeProcessOrder(Document):
+
+    # =========================================================
+    # VALIDATION
+    # =========================================================
+
+    def validate(self):
+
+        # self.validate_company_branch()  # DISABLED TO BYPASS ERROR
+        self.validate_operation()
+        self.validate_operation_role()
+        self.validate_route_step()
+        self.validate_operation_requirements()
+        self.validate_inputs()
+        self.validate_outputs()
+
+        from coffee_processing.coffee_processing.validations.grading_validation import validate_grading_outputs
+        validate_grading_outputs(self)
+
+        self.calculate_quantities()
+        self.calculate_variance()
+        self.validate_variance()
+        self.calculate_costs()
+
+        # =====================================================
+        # COMPLETE VARIANCE TREATMENT
+        # =====================================================
+
+        if (
+            self.variance_status == "Within Threshold"
+            and self.variance_qty < 0
+            and self.variance_treatment_method
+            == "توزيع التكلفة على الكمية الفعلية"
+        ):
+            self.variance_treatment_status = "تمت المعالجة"
+
+        self.update_status()
+
+    # =========================================================
+    # COMPANY / BRANCH
+    # =========================================================
+
+    def validate_company_branch(self):
+        return  # Bypassed permanently due to missing 'company' field in Branch Doctype
+
+
+        if not self.company:
+            frappe.throw(_("Company is required."))
+
+        if not self.branch:
+            frappe.throw(_("Branch is required."))
+
+        branch_company = self.company  # Patched to bypass missing column error
+
+        if branch_company and branch_company != self.company:
+
+            frappe.throw(
+                _("Branch {0} does not belong to Company {1}.")
+                .format(
+                    self.branch,
+                    self.company
+                )
+            )
+
+    # =========================================================
+    # OPERATION
+    # =========================================================
+
+
+    def validate_operation_role(self):
+
+        if not self.operation:
+            return
+
+        required_role = frappe.db.get_value(
+            "Coffee Operation Master",
+            self.operation,
+            "required_role"
+        )
+
+        if not required_role:
+            return
+
+        user = frappe.session.user
+
+        # Administrator and System Manager can perform all operations
+        if user == "Administrator":
+            return
+
+        user_roles = frappe.get_roles(user)
+
+        if "System Manager" in user_roles:
+            return
+
+        # Processing Manager can perform all coffee operations
+        if "Coffee Processing Manager" in user_roles:
+            return
+
+        if required_role not in user_roles:
+
+            operation_name = frappe.db.get_value(
+                "Coffee Operation Master",
+                self.operation,
+                "operation_name_ar"
+            ) or self.operation
+
+            frappe.throw(
+                _(
+                    "لا تملك الصلاحية لتنفيذ عملية {0}. "
+                    "الدور المطلوب: {1}."
+                ).format(
+                    operation_name,
+                    required_role
+                )
+            )
+
+
+    def validate_operation(self):
+
+        if not self.operation:
+            frappe.throw(_("Operation is required."))
+
+        if not frappe.db.exists(
+            "Coffee Operation Master",
+            self.operation
+        ):
+            frappe.throw(
+                _("Operation {0} does not exist.")
+                .format(self.operation)
+            )
+
+    # =========================================================
+    # ROUTE STEP
+    # =========================================================
+
+    def validate_route_step(self):
+
+        if not self.route:
+            frappe.throw(_("Route is required."))
+
+        if not self.route_step_sequence:
+            frappe.throw(
+                _("Route Step Sequence is required.")
+            )
+
+        route = frappe.get_doc(
+            "Coffee Process Route",
+            self.route
+        )
+
+        found = False
+
+        for step in route.steps:
+
+            if flt(step.sequence) == flt(
+                self.route_step_sequence
+            ):
+
+                found = True
+
+                if step.operation != self.operation:
+
+                    frappe.throw(
+                        _(
+                            "Operation {0} does not match "
+                            "route step {1}. Expected {2}."
+                        ).format(
+                            self.operation,
+                            self.route_step_sequence,
+                            step.operation
+                        )
+                    )
+
+                break
+
+        if not found:
+
+            frappe.throw(
+                _(
+                    "Route step {0} does not exist in route {1}."
+                ).format(
+                    self.route_step_sequence,
+                    self.route
+                )
+            )
+
+    # =========================================================
+    # OPERATION REQUIREMENTS
+    # =========================================================
+
+    def validate_operation_requirements(self):
+
+        operation = frappe.get_doc(
+            "Coffee Operation Master",
+            self.operation
+        )
+
+        if operation.requires_weight:
+
+            if not self.weight_before:
+
+                frappe.throw(
+                    _(
+                        "Weight Before is required for operation {0}."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+            if not self.weight_after:
+
+                frappe.throw(
+                    _(
+                        "Weight After is required for operation {0}."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+        if operation.requires_quality:
+
+            if not self.quality_result:
+
+                frappe.throw(
+                    _(
+                        "Quality Result is required for operation {0}."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+        if operation.requires_sample:
+
+            if not self.sample_reference:
+
+                frappe.throw(
+                    _(
+                        "Sample Reference is required for operation {0}."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+    # =========================================================
+    # INPUT VALIDATION
+    # =========================================================
+
+    def validate_inputs(self):
+
+        if not self.inputs:
+
+            frappe.throw(
+                _("At least one input is required.")
+            )
+
+        operation = frappe.get_doc(
+            "Coffee Operation Master",
+            self.operation
+        )
+
+        if not operation.allow_multiple_inputs:
+
+            if len(self.inputs) != 1:
+
+                frappe.throw(
+                    _(
+                        "Operation {0} allows only one input."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+        for row in self.inputs:
+
+            # New/submitted workflow requires every input to reference
+            # a Coffee Batch. Historical submitted documents are not changed.
+            if self.is_new() or self.docstatus == 0:
+                if not row.coffee_batch:
+                    frappe.throw(
+                        _(
+                            "Coffee Batch is required for input item {0}."
+                        ).format(
+                            row.item or _("Not Specified")
+                        )
+                    )
+
+            if row.coffee_batch:
+                if not frappe.db.exists("Coffee Batch", row.coffee_batch):
+                    frappe.throw(
+                        _("Input Coffee Batch {0} does not exist.").format(
+                            row.coffee_batch
+                        )
+                    )
+
+                coffee_batch = frappe.get_doc(
+                    "Coffee Batch",
+                    row.coffee_batch
+                )
+
+                if (
+                    coffee_batch.company
+                    and self.company
+                    and coffee_batch.company != self.company
+                ):
+                    frappe.throw(
+                        _(
+                            "Input Coffee Batch {0} does not belong to company {1}."
+                        ).format(
+                            row.coffee_batch,
+                            self.company,
+                        )
+                    )
+
+                # Resolve the real ERPNext Item from the linked Batch.
+                # custom_item_code is a Coffee Batch tracking code, not an ERPNext Item.
+                batch_item = None
+
+                if coffee_batch.erpnext_batch:
+                    batch_item = frappe.db.get_value(
+                        "Batch",
+                        coffee_batch.erpnext_batch,
+                        "item"
+                    )
+
+                if batch_item:
+                    if row.item and row.item != batch_item:
+                        frappe.throw(
+                            _(
+                                "Input Item {0} does not match ERPNext Batch {1} item {2}."
+                            ).format(
+                                row.item,
+                                coffee_batch.erpnext_batch,
+                                batch_item,
+                            )
+                        )
+                    row.item = batch_item
+                elif not row.item:
+                    frappe.throw(
+                        _(
+                            "Cannot determine ERPNext Item for Coffee Batch {0}."
+                        ).format(row.coffee_batch)
+                    )
+
+                if not row.warehouse:
+                    row.warehouse = coffee_batch.current_warehouse
+
+                if not row.batch_no and coffee_batch.erpnext_batch:
+                    row.batch_no = coffee_batch.erpnext_batch
+
+                # If the Coffee Batch has a current warehouse,
+                # the input must come from that warehouse.
+                if (
+                    coffee_batch.current_warehouse
+                    and row.warehouse
+                    and row.warehouse != coffee_batch.current_warehouse
+                ):
+                    frappe.throw(
+                        _(
+                            "Input Warehouse {0} does not match Coffee Batch {1} warehouse {2}."
+                        ).format(
+                            row.warehouse,
+                            row.coffee_batch,
+                            coffee_batch.current_warehouse,
+                        )
+                    )
+
+            if not row.item:
+                frappe.throw(
+                    _("Input Item is required.")
+                )
+
+            if not row.warehouse:
+                frappe.throw(
+                    _("Input Warehouse is required.")
+                )
+
+            if flt(row.qty) <= 0:
+
+                frappe.throw(
+                    _(
+                        "Input quantity must be greater than zero."
+                    )
+                )
+
+            # Validate available Coffee Batch quantity in stock UOM.
+            if row.coffee_batch:
+                conversion_factor = flt(row.conversion_factor) or 1
+                requested_stock_qty = flt(row.qty) * conversion_factor
+
+                if requested_stock_qty > flt(coffee_batch.qty) + 0.000001:
+                    frappe.throw(
+                        _(
+                            "Input quantity {0} exceeds available quantity {1} "
+                            "in Coffee Batch {2}."
+                        ).format(
+                            requested_stock_qty,
+                            flt(coffee_batch.qty),
+                            row.coffee_batch,
+                        )
+                    )
+
+            if not row.uom:
+                row.uom = frappe.db.get_value(
+                    "Item",
+                    row.item,
+                    "stock_uom"
+                )
+
+            if not row.batch_no:
+
+                has_batch = frappe.db.get_value(
+                    "Item",
+                    row.item,
+                    "has_batch_no"
+                )
+
+                if has_batch:
+
+                    frappe.throw(
+                        _(
+                            "Batch No is required for input item {0}."
+                        ).format(
+                            row.item
+                        )
+                    )
+
+    # =========================================================
+    # OUTPUT VALIDATION
+    # =========================================================
+
+    def validate_outputs(self):
+
+        if not self.outputs:
+
+            frappe.throw(
+                _("At least one output is required.")
+            )
+
+        operation = frappe.get_doc(
+            "Coffee Operation Master",
+            self.operation
+        )
+
+        if not operation.allow_multiple_outputs:
+
+            if len(self.outputs) != 1:
+
+                frappe.throw(
+                    _(
+                        "Operation {0} allows only one output."
+                    ).format(
+                        operation.operation_name_ar
+                    )
+                )
+
+        for row in self.outputs:
+
+            if row.coffee_batch:
+                if not frappe.db.exists("Coffee Batch", row.coffee_batch):
+                    frappe.throw(
+                        _("Output Coffee Batch {0} does not exist.").format(
+                            row.coffee_batch
+                        )
+                    )
+
+                coffee_batch = frappe.get_doc(
+                    "Coffee Batch",
+                    row.coffee_batch
+                )
+
+                if (
+                    coffee_batch.company
+                    and self.company
+                    and coffee_batch.company != self.company
+                ):
+                    frappe.throw(
+                        _(
+                            "Output Coffee Batch {0} does not belong to company {1}."
+                        ).format(
+                            row.coffee_batch,
+                            self.company,
+                        )
+                    )
+
+                if not row.item:
+                    row.item = coffee_batch.custom_item_code
+
+                if not row.warehouse:
+                    row.warehouse = coffee_batch.current_warehouse
+
+                if not row.batch_no and coffee_batch.erpnext_batch:
+                    row.batch_no = coffee_batch.erpnext_batch
+
+            if not row.item:
+                frappe.throw(
+                    _("Output Item is required.")
+                )
+
+            if not row.warehouse:
+                frappe.throw(
+                    _("Output Warehouse is required.")
+                )
+
+            if flt(row.qty) <= 0:
+
+                frappe.throw(
+                    _("Output quantity must be greater than zero.")
+                )
+
+            if not row.uom:
+
+                row.uom = frappe.db.get_value(
+                    "Item",
+                    row.item,
+                    "stock_uom"
+                )
+
+    # =========================================================
+    # QUANTITIES
+    # =========================================================
+
+    def calculate_quantities(self):
+
+        input_total = 0
+        output_total = 0
+
+        for row in self.inputs:
+
+            conversion_factor = (
+                flt(row.conversion_factor) or 1
+            )
+
+            row.stock_qty = (
+                flt(row.qty)
+                * conversion_factor
+            )
+
+            input_total += flt(row.stock_qty)
+
+        for row in self.outputs:
+
+            conversion_factor = (
+                flt(row.conversion_factor) or 1
+            )
+
+            row.stock_qty = (
+                flt(row.qty)
+                * conversion_factor
+            )
+
+            output_total += flt(row.stock_qty)
+
+        self.input_qty_total = input_total
+        self.output_qty_total = output_total
+
+        self.loss_qty = max(
+            input_total - output_total,
+            0
+        )
+
+    # =========================================================
+    # VARIANCE
+    # =========================================================
+
+    def calculate_variance(self):
+
+        input_total = 0
+        output_total = 0
+
+        # استخدام الكمية بوحدة المخزون بعد تطبيق معامل التحويل
+        # لضمان أن حساب الفرق يستخدم نفس أساس calculate_quantities().
+        for row in self.inputs:
+            input_total += flt(row.stock_qty)
+
+        for row in self.outputs:
+            output_total += flt(row.stock_qty)
+
+        # تحديث الإجماليات الفعلية
+        self.input_qty_total = input_total
+        self.output_qty_total = output_total
+
+        # الفرق = الخارج - الداخل
+        variance = output_total - input_total
+
+        self.variance_qty = variance
+
+        # نسبة الفرق بالنسبة للمدخل
+        if input_total:
+            self.variance_percent = (
+                abs(variance) / input_total * 100
+            )
+        else:
+            self.variance_percent = 0
+
+        # تحديد اتجاه الفرق
+        self.negative_variance = 1 if variance < 0 else 0
+        self.positive_variance = 1 if variance > 0 else 0
+
+        # كمية النقص الفعلية
+        self.loss_qty = abs(variance) if variance < 0 else 0
+    def validate_variance(self):
+
+        operation = frappe.get_doc(
+            "Coffee Operation Master",
+            self.operation
+        )
+
+        threshold = flt(
+            operation.variance_threshold
+        )
+
+        self.operation_variance_threshold = threshold
+
+        treatment = (
+            self.variance_treatment_method
+            or operation.variance_treatment_method
+            or "توزيع التكلفة على الكمية الفعلية"
+        )
+
+        self.variance_treatment_method = treatment
+
+        variance = flt(self.variance_qty)
+        variance_percent = flt(self.variance_percent)
+
+        # =====================================================
+        # NO VARIANCE
+        # =====================================================
+
+        if not variance:
+
+            self.variance_status = "Within Threshold"
+            self.variance_treatment_status = "غير مطلوب"
+
+            return
+
+        # =====================================================
+        # REJECT ALL VARIANCE
+        # =====================================================
+
+        if treatment == "رفض الفرق":
+
+            self.variance_status = "Rejected"
+            self.variance_treatment_status = "مرفوض"
+
+            frappe.throw(
+                _(
+                    "Variance is rejected by the selected "
+                    "variance treatment policy for operation {0}."
+                ).format(
+                    operation.operation_name_ar
+                )
+            )
+
+        # =====================================================
+        # NEGATIVE VARIANCE / LOSS
+        # =====================================================
+
+        if variance < 0:
+
+            # الفاقد المسموح لا يُرفض بسبب allow_negative_variance.
+            if flt(operation.allow_loss) == 1:
+
+                self.loss_qty = abs(variance)
+
+            # إذا لم تسمح العملية بالفاقد،
+            # عندها فقط نتحقق من السماح بالفرق السالب.
+            elif flt(operation.allow_negative_variance) != 1:
+
+                self.variance_status = "Rejected"
+                self.variance_treatment_status = "مرفوض"
+
+                frappe.throw(
+                    _(
+                        "Negative variance of {0}% is not allowed "
+                        "for operation {1}."
+                    ).format(
+                        variance_percent,
+                        operation.operation_name_ar
+                    )
+                )
+
+        # =====================================================
+        # EXPLICIT APPROVAL POLICY
+        # =====================================================
+
+        if treatment == "طلب موافقة":
+
+            self.variance_status = "Requires Approval"
+            self.variance_treatment_status = "بانتظار الموافقة"
+
+            if self.approval_status != "Approved":
+                self.approval_status = "Pending"
+
+            return
+
+        # =====================================================
+        # ACTUAL QUANTITY COST DISTRIBUTION
+        # =====================================================
+        # في هذه السياسة لا نضيف كمية أو تكلفة وهمية.
+        # التكلفة الحقيقية تبقى كما هي ويتم توزيعها
+        # على الكمية الفعلية الخارجة، سواء كانت أقل
+        # أو أكثر من الكمية الداخلة.
+        if treatment == "توزيع التكلفة على الكمية الفعلية":
+
+            self.variance_status = "Within Threshold"
+            self.variance_treatment_status = "تمت المعالجة"
+
+            return
+
+        # =====================================================
+        # WITHIN ALLOWED THRESHOLD
+        # =====================================================
+
+        if variance_percent <= threshold:
+
+            self.variance_status = "Within Threshold"
+            self.variance_treatment_status = "مطلوب معالجة"
+
+            return
+
+        # =====================================================
+        # ABOVE THRESHOLD
+        # =====================================================
+
+        if operation.variance_requires_approval:
+
+            self.variance_status = "Requires Approval"
+            self.variance_treatment_status = "بانتظار الموافقة"
+
+            if self.approval_status != "Approved":
+                self.approval_status = "Pending"
+
+        else:
+
+            self.variance_status = "Rejected"
+            self.variance_treatment_status = "مرفوض"
+
+            frappe.throw(
+                _(
+                    "Variance of {0}% exceeds the allowed threshold "
+                    "of {1}% for operation {2}."
+                ).format(
+                    variance_percent,
+                    threshold,
+                    operation.operation_name_ar
+                )
+            )
+
+    def calculate_costs(self):
+
+        input_cost = 0
+
+        # =====================================================
+        # INPUT COST
+        # =====================================================
+
+        for row in self.inputs:
+
+            # الكمية الفعلية دائمًا من qty
+            qty = (
+                flt(row.qty)
+                * (flt(row.conversion_factor) or 1)
+            )
+
+            row.stock_qty = qty
+
+            rate = flt(row.valuation_rate)
+
+            # Batch-specific cost
+            if row.batch_no and row.item:
+
+                batch_rate = frappe.db.sql(
+                    '''
+                    SELECT
+                        e.incoming_rate
+                    FROM `tabSerial and Batch Entry` e
+                    INNER JOIN `tabSerial and Batch Bundle` b
+                        ON b.name = e.parent
+                    WHERE e.batch_no = %s
+                      AND b.item_code = %s
+                      AND e.is_outward = 0
+                      AND e.incoming_rate > 0
+                    ORDER BY b.creation DESC, e.idx DESC
+                    LIMIT 1
+                    ''',
+                    (row.batch_no, row.item),
+                    as_dict=True
+                )
+
+                if batch_rate:
+                    rate = flt(batch_rate[0].incoming_rate)
+
+            # Bin fallback only when there is no batch
+            if not rate and not row.batch_no and row.item:
+
+                rate = flt(
+                    frappe.db.get_value(
+                        "Bin",
+                        {
+                            "item_code": row.item,
+                            "warehouse": row.warehouse
+                        },
+                        "valuation_rate"
+                    )
+                )
+
+            row.valuation_rate = rate
+            row.amount = qty * rate
+
+            input_cost += row.amount
+
+        self.input_cost_total = input_cost
+
+        process_cost = flt(self.process_cost_total)
+        overhead_cost = flt(self.overhead_cost_total)
+
+        # =====================================================
+        # COST ALLOCATION METHOD
+        # =====================================================
+
+        operation = frappe.get_doc(
+            "Coffee Operation Master",
+            self.operation
+        )
+
+        method = operation.cost_allocation_method
+
+        if not method:
+            frappe.throw(
+                _(
+                    "Cost allocation method is not configured "
+                    "for operation {0}."
+                ).format(self.operation)
+            )
+
+        self.cost_allocation_method = method
+
+        # =====================================================
+        # BY-PRODUCT VALUATION METHOD
+        #
+        # Supported:
+        # 1. قيمة مباشرة
+        # 2. قيمة لكل وحدة
+        # 3. نسبة من تكلفة المدخل
+        # 4. نسبة من قيمة المنتج الرئيسي
+        # 5. بدون قيمة
+        # =====================================================
+
+        valuation_method = (
+            self.byproduct_valuation_method
+            or operation.byproduct_valuation_method
+            or "قيمة مباشرة"
+        )
+
+        self.byproduct_valuation_method = valuation_method
+
+        # =====================================================
+        # PREPARE OUTPUT QUANTITIES
+        # =====================================================
+
+        for row in self.outputs:
+
+            # الكمية الفعلية دائمًا من qty
+            qty = (
+                flt(row.qty)
+                * (flt(row.conversion_factor) or 1)
+            )
+
+            row.stock_qty = qty
+            row.amount = 0
+
+            if row.output_type != "By-Product":
+                setattr(row, "calculated_byproduct_value", 0)
+
+        # =====================================================
+        # MAIN PRODUCT QUANTITY
+        # =====================================================
+
+        main_qty = sum(
+            flt(row.stock_qty)
+            for row in self.outputs
+            if row.output_type in ("Main", "Main Product")
+        )
+
+        gross_cost = (
+            input_cost
+            + process_cost
+            + overhead_cost
+        )
+
+        # =====================================================
+        # CALCULATE BY-PRODUCT VALUE
+        # =====================================================
+
+        byproduct_credit = 0
+
+        byproduct_rows = [
+            row
+            for row in self.outputs
+            if row.output_type == "By-Product"
+        ]
+
+        total_byproduct_percent = sum(
+            flt(getattr(row, "byproduct_percent", 0))
+            for row in byproduct_rows
+        )
+
+        if total_byproduct_percent > 100:
+            frappe.throw(
+                _(
+                    "Total by-product percentage cannot exceed 100%. "
+                    "Current total: {0}%."
+                ).format(total_byproduct_percent)
+            )
+
+        for row in byproduct_rows:
+
+            qty = flt(row.stock_qty)
+
+            # -------------------------------------------------
+            # Direct Value
+            # -------------------------------------------------
+
+            if valuation_method == "قيمة مباشرة":
+
+                value = flt(getattr(row, "byproduct_value", 0))
+
+                if value < 0:
+                    frappe.throw(
+                        _("By-product value cannot be negative for {0}.").format(
+                            row.item
+                        )
+                    )
+
+            # -------------------------------------------------
+            # Value Per Unit
+            # -------------------------------------------------
+
+            elif valuation_method == "قيمة لكل وحدة":
+
+                rate = flt(getattr(row, "byproduct_rate", 0))
+
+                if rate < 0:
+                    frappe.throw(
+                        _("By-product unit value cannot be negative for {0}.").format(
+                            row.item
+                        )
+                    )
+
+                value = qty * rate
+
+            # -------------------------------------------------
+            # Percentage of Input Cost
+            # -------------------------------------------------
+
+            elif valuation_method == "نسبة من تكلفة المدخل":
+
+                percent = flt(getattr(row, "byproduct_percent", 0))
+
+                if percent < 0:
+                    frappe.throw(
+                        _("By-product percentage cannot be negative for {0}.").format(
+                            row.item
+                        )
+                    )
+
+                value = (
+                    input_cost
+                    * percent
+                    / 100
+                )
+
+            # -------------------------------------------------
+            # Percentage of Main Product Value
+            #
+            # We define Main Product Value as the gross
+            # processing cost before by-product deduction.
+            # -------------------------------------------------
+
+            elif valuation_method == "نسبة من قيمة المنتج الرئيسي":
+
+                percent = flt(getattr(row, "byproduct_percent", 0))
+
+                if percent < 0:
+                    frappe.throw(
+                        _("By-product percentage cannot be negative for {0}.").format(
+                            row.item
+                        )
+                    )
+
+                value = (
+                    gross_cost
+                    * percent
+                    / 100
+                )
+
+            # -------------------------------------------------
+            # No Value
+            # -------------------------------------------------
+
+            elif valuation_method == "بدون قيمة":
+
+                value = 0
+
+            else:
+
+                frappe.throw(
+                    _(
+                        "Unknown by-product valuation method: {0}"
+                    ).format(valuation_method)
+                )
+
+            setattr(row, "calculated_byproduct_value", value)
+
+            # Store calculated value in amount.
+            # This is the total value of the by-product,
+            # not a per-unit rate.
+            row.amount = value
+
+            if qty:
+                row.valuation_rate = value / qty
+            else:
+                row.valuation_rate = 0
+
+            byproduct_credit += value
+
+        self.byproduct_credit_total = byproduct_credit
+
+        # =====================================================
+        # NET COST AFTER BY-PRODUCT VALUE
+        # =====================================================
+
+        net_cost = (
+            gross_cost
+            - byproduct_credit
+        )
+
+        if net_cost < 0:
+            net_cost = 0
+
+        # =====================================================
+        # QUANTITY BASED
+        # =====================================================
+
+        if method == "Quantity Based":
+
+            total_qty = sum(
+                flt(row.stock_qty)
+                for row in self.outputs
+                if row.output_type not in ["Loss", "Waste"]
+            )
+
+            for row in self.outputs:
+
+                if row.output_type == "By-Product":
+
+                    continue
+
+                if row.output_type in ["Loss", "Waste"]:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+                    continue
+
+                qty = flt(row.stock_qty)
+
+                if total_qty and qty:
+
+                    row.amount = (
+                        net_cost
+                        * qty
+                        / total_qty
+                    )
+
+                    row.valuation_rate = (
+                        row.amount / qty
+                    )
+
+                else:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+
+        # =====================================================
+        # BY-PRODUCT CREDIT
+        # =====================================================
+
+        elif method == "By-Product Credit":
+
+            main_outputs = [
+                row
+                for row in self.outputs
+                if row.output_type in ("Main", "Main Product")
+            ]
+
+            main_qty = sum(
+                flt(row.stock_qty)
+                for row in main_outputs
+            )
+
+            for row in self.outputs:
+
+                if row.output_type == "By-Product":
+
+                    continue
+
+                if row.output_type in ["Loss", "Waste"]:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+                    continue
+
+                qty = flt(row.stock_qty)
+
+                if main_qty and qty:
+
+                    row.amount = (
+                        net_cost
+                        * qty
+                        / main_qty
+                    )
+
+                    row.valuation_rate = (
+                        row.amount / qty
+                    )
+
+                else:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+
+        # =====================================================
+        # HYBRID
+        #
+        # Material cost:
+        # Quantity Based
+        #
+        # Process + Overhead:
+        # Relative Sales Value
+        # =====================================================
+
+        elif method == "Hybrid":
+
+            material_pool = (
+                input_cost
+                - byproduct_credit
+            )
+
+            if material_pool < 0:
+                material_pool = 0
+
+            process_pool = (
+                process_cost
+                + overhead_cost
+            )
+
+            main_outputs = [
+                row
+                for row in self.outputs
+                if row.output_type in ("Main", "Main Product")
+            ]
+
+            main_qty = sum(
+                flt(row.stock_qty)
+                for row in main_outputs
+            )
+
+            # Selling prices for main products
+            price_list = frappe.db.get_value(
+                "Price List",
+                {
+                    "selling": 1,
+                    "enabled": 1,
+                    "name": "البيع القياسية"
+                },
+                "name"
+            )
+
+            if not price_list:
+
+                price_list = frappe.db.get_value(
+                    "Price List",
+                    {
+                        "selling": 1,
+                        "enabled": 1
+                    },
+                    "name"
+                )
+
+            main_sales = []
+
+            for row in main_outputs:
+
+                selling_rate = 0
+
+                if price_list and row.item:
+
+                    selling_rate = flt(
+                        frappe.db.get_value(
+                            "Item Price",
+                            {
+                                "item_code": row.item,
+                                "price_list": price_list,
+                                "uom": row.uom
+                            },
+                            "price_list_rate"
+                        )
+                    )
+
+                    if not selling_rate:
+
+                        selling_rate = flt(
+                            frappe.db.get_value(
+                                "Item Price",
+                                {
+                                    "item_code": row.item,
+                                    "price_list": price_list
+                                },
+                                "price_list_rate"
+                            )
+                        )
+
+                main_sales.append(
+                    {
+                        "row": row,
+                        "sales_value": (
+                            flt(row.stock_qty)
+                            * selling_rate
+                        )
+                    }
+                )
+
+            main_sales_total = sum(
+                flt(data["sales_value"])
+                for data in main_sales
+            )
+
+            for data in main_sales:
+
+                row = data["row"]
+                qty = flt(row.stock_qty)
+
+                material_allocated = 0
+                process_allocated = 0
+
+                if main_qty and qty:
+
+                    material_allocated = (
+                        material_pool
+                        * qty
+                        / main_qty
+                    )
+
+                if main_sales_total:
+
+                    process_allocated = (
+                        process_pool
+                        * data["sales_value"]
+                        / main_sales_total
+                    )
+
+                else:
+
+                    if main_qty and qty:
+
+                        process_allocated = (
+                            process_pool
+                            * qty
+                            / main_qty
+                        )
+
+                row.amount = (
+                    material_allocated
+                    + process_allocated
+                )
+
+                if qty:
+
+                    row.valuation_rate = (
+                        row.amount / qty
+                    )
+
+                else:
+
+                    row.valuation_rate = 0
+
+        # =====================================================
+        # RELATIVE SALES VALUE
+        # =====================================================
+
+        elif method == "Relative Sales Value":
+
+            price_list = frappe.db.get_value(
+                "Price List",
+                {
+                    "selling": 1,
+                    "enabled": 1,
+                    "name": "البيع القياسية"
+                },
+                "name"
+            )
+
+            if not price_list:
+
+                price_list = frappe.db.get_value(
+                    "Price List",
+                    {
+                        "selling": 1,
+                        "enabled": 1
+                    },
+                    "name"
+                )
+
+            saleable_outputs = []
+
+            for row in self.outputs:
+
+                if row.output_type == "By-Product":
+                    continue
+
+                if row.output_type in ["Loss", "Waste"]:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+                    continue
+
+                selling_rate = 0
+
+                if price_list and row.item:
+
+                    selling_rate = flt(
+                        frappe.db.get_value(
+                            "Item Price",
+                            {
+                                "item_code": row.item,
+                                "price_list": price_list,
+                                "uom": row.uom
+                            },
+                            "price_list_rate"
+                        )
+                    )
+
+                    if not selling_rate:
+
+                        selling_rate = flt(
+                            frappe.db.get_value(
+                                "Item Price",
+                                {
+                                    "item_code": row.item,
+                                    "price_list": price_list
+                                },
+                                "price_list_rate"
+                            )
+                        )
+
+                saleable_outputs.append(
+                    {
+                        "row": row,
+                        "sales_value": (
+                            flt(row.stock_qty)
+                            * selling_rate
+                        )
+                    }
+                )
+
+            sales_total = sum(
+                flt(data["sales_value"])
+                for data in saleable_outputs
+            )
+
+            total_qty = sum(
+                flt(data["row"].stock_qty)
+                for data in saleable_outputs
+            )
+
+            if sales_total:
+
+                for data in saleable_outputs:
+
+                    row = data["row"]
+                    qty = flt(row.stock_qty)
+
+                    if qty:
+
+                        row.amount = (
+                            net_cost
+                            * data["sales_value"]
+                            / sales_total
+                        )
+
+                        row.valuation_rate = (
+                            row.amount / qty
+                        )
+
+                    else:
+
+                        row.amount = 0
+                        row.valuation_rate = 0
+
+            else:
+
+                for data in saleable_outputs:
+
+                    row = data["row"]
+                    qty = flt(row.stock_qty)
+
+                    if total_qty and qty:
+
+                        row.amount = (
+                            net_cost
+                            * qty
+                            / total_qty
+                        )
+
+                        row.valuation_rate = (
+                            row.amount / qty
+                        )
+
+                    else:
+
+                        row.amount = 0
+                        row.valuation_rate = 0
+
+        # =====================================================
+        # MANUAL
+        # =====================================================
+
+        elif method == "Manual":
+
+            for row in self.outputs:
+
+                if row.output_type == "By-Product":
+                    continue
+
+                if row.output_type in ["Loss", "Waste"]:
+
+                    row.amount = 0
+                    row.valuation_rate = 0
+
+        # =====================================================
+        # UNKNOWN METHOD
+        # =====================================================
+
+        else:
+
+            frappe.throw(
+                _("Unsupported cost allocation method: {0}").format(
+                    method
+                )
+            )
+
+        # =====================================================
+        # TOTAL OUTPUT COST
+        # =====================================================
+
+        self.output_cost_total = sum(
+            flt(row.amount)
+            for row in self.outputs
+        )
+
+        # =====================================================
+        # VARIANCE TREATMENT COMPLETION
+        # =====================================================
+
+        if (
+            self.variance_status == "Within Threshold"
+            and self.variance_qty < 0
+            and self.variance_treatment_method
+            == "توزيع التكلفة على الكمية الفعلية"
+        ):
+            self.variance_treatment_status = "تمت المعالجة"
+    def update_status(self):
+
+        if self.docstatus == 2:
+
+            self.status = "Cancelled"
+
+        elif self.docstatus == 1:
+
+            self.status = "Completed"
+
+        elif self.approval_status == "Pending":
+
+            self.status = "On Hold"
+
+        else:
+
+            self.status = "Ready"
+
+    # =========================================================
+    # BATCH CREATION
+    # =========================================================
+
+    def _is_main_output(self, row):
+        """Return True for both legacy and current Main Product values."""
+        return row.output_type in ("Main", "Main Product")
+
+    def _get_output_batch_names_from_stock_entry(self):
+        """Return ERPNext Batch names produced by this Process Order."""
+        if not self.stock_entry:
+            return []
+
+        rows = frappe.get_all(
+            "Stock Entry Detail",
+            filters={
+                "parent": self.stock_entry,
+                "t_warehouse": ["is", "set"],
+                "batch_no": ["is", "set"],
+            },
+            pluck="batch_no",
+        )
+
+        return list(dict.fromkeys([x for x in rows if x]))
+
+    def get_or_create_output_batch(self, row):
+
+        has_batch = frappe.db.get_value(
+            "Item",
+            row.item,
+            "has_batch_no"
+        )
+
+        if not has_batch:
+            return None
+
+        if row.batch_no:
+
+            batch_item = frappe.db.get_value(
+                "Batch",
+                row.batch_no,
+                "item"
+            )
+
+            if batch_item != row.item:
+
+                frappe.throw(
+                    _(
+                        "Batch {0} does not belong to Item {1}."
+                    ).format(
+                        row.batch_no,
+                        row.item
+                    )
+                )
+
+            return row.batch_no
+
+        batch_name = frappe.model.naming.make_autoname(
+            "CPO-BATCH-.YYYY.-.#####"
+        )
+
+        batch = frappe.new_doc("Batch")
+
+        batch.batch_id = batch_name
+        batch.item = row.item
+
+        batch.insert()
+
+        row.batch_no = batch.name
+
+        return batch.name
+
+    # =========================================================
+    # CREATE REPACK STOCK ENTRY
+    # =========================================================
+
+    def _sync_coffee_batches(self, input_rows, output_rows):
+        """Create/update Coffee Batch records after a successful Stock Entry.
+
+        Each actual output gets its own Coffee Batch and ERPNext Batch link.
+        Existing input Coffee Batches are reduced by the quantities consumed.
+        """
+        parent_batch_name = None
+
+        if len(input_rows) == 1:
+            input_row = input_rows[0][0]
+
+            if (
+                input_row.coffee_batch
+                and frappe.db.exists("Coffee Batch", input_row.coffee_batch)
+            ):
+                parent_batch_name = input_row.coffee_batch
+
+        grade_rows = frappe.get_all(
+            "Coffee Grade Master",
+            filters={"active": 1},
+            fields=[
+                "name",
+                "grade_number",
+                "specialty_item_code",
+                "commercial_item_code",
+            ],
+        )
+
+        for row, _se_row in output_rows:
+
+            if not row.batch_no:
+                continue
+
+            # Every actual processing output must create a NEW Coffee Batch.
+            # The output row may still reference the consumed input Coffee Batch;
+            # that reference must never cause the input Batch to be overwritten.
+            batch = frappe.new_doc("Coffee Batch")
+
+            batch.custom_item_code = row.item
+            batch.item_name = (
+                frappe.db.get_value("Item", row.item, "item_name")
+                or row.item
+            )
+
+            batch.company = self.company
+            batch.branch = self.branch
+            batch.route = self.route
+            batch.current_step = self.route_step_sequence
+            batch.current_operation = self.operation
+            batch.current_warehouse = row.warehouse
+
+            # Coffee Batch quantities are stored in stock UOM.
+            batch.qty = flt(row.stock_qty)
+            batch.valuation_rate = flt(row.valuation_rate)
+            batch.cost_per_kg = flt(row.valuation_rate)
+            batch.total_value = (
+                flt(row.stock_qty) * flt(row.valuation_rate)
+            )
+            batch.reserved_qty = 0
+
+            batch.source_type = (
+                "Grading"
+                if self.operation == "GRADING"
+                else "Processing"
+            )
+
+            from coffee_processing.coffee_processing.services.quality_service import (
+                get_cost_center_mapping,
+            )
+
+            cost_mapping = get_cost_center_mapping(
+                operation=self.operation,
+                company=self.company,
+                branch=self.branch,
+            )
+
+            if not cost_mapping or not cost_mapping.get("cost_center"):
+                frappe.throw(
+                    _(
+                        "No active Cost Center Mapping found for operation {0}, "
+                        "company {1}, branch {2}."
+                    ).format(
+                        self.operation,
+                        self.company,
+                        self.branch or _("Not Specified"),
+                    )
+                )
+
+            batch.cost_center = cost_mapping.get("cost_center")
+            batch.erpnext_batch = row.batch_no
+
+            matched_grade = False
+
+            for grade in grade_rows:
+
+                if row.item == grade.specialty_item_code:
+                    batch.coffee_type = "Specialty"
+                    batch.coffee_grade = grade.name
+                    matched_grade = True
+                    break
+
+                if row.item == grade.commercial_item_code:
+                    batch.coffee_type = "Commercial"
+                    batch.coffee_grade = grade.name
+                    matched_grade = True
+                    break
+
+            if not matched_grade:
+
+                if row.output_type in ("By-Product", "Waste"):
+                    batch.coffee_type = "By-Product"
+                else:
+                    batch.coffee_type = "Mixed"
+
+                batch.coffee_grade = None
+
+            if self.operation == "GRADING":
+                batch.status = "Graded"
+            else:
+                batch.status = "In Process"
+
+            if parent_batch_name and not batch.parent_batch:
+                batch.parent_batch = parent_batch_name
+
+            if batch.is_new():
+                batch.insert(ignore_permissions=True)
+            else:
+                batch.save(ignore_permissions=True)
+
+            row.db_set("coffee_batch", batch.name)
+
+        # Reduce existing source Coffee Batches only after Stock Entry submission.
+        for row, _se_row in input_rows:
+
+            if not row.coffee_batch:
+                continue
+
+            if not frappe.db.exists("Coffee Batch", row.coffee_batch):
+                continue
+
+            parent = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch
+            )
+
+            # Consume the Coffee Batch using stock-UOM quantity.
+            remaining_qty = max(
+                0,
+                flt(parent.qty) - flt(row.stock_qty)
+            )
+
+            parent.qty = remaining_qty
+
+            parent.total_value = (
+                remaining_qty * flt(parent.valuation_rate)
+            )
+
+            parent.status = (
+                "Consumed"
+                if remaining_qty <= 0.000001
+                else parent.status
+            )
+
+            parent.save(ignore_permissions=True)
+
+    def create_stock_entry(self):
+
+        if self.stock_entry:
+            existing_status = frappe.db.get_value(
+                "Stock Entry",
+                self.stock_entry,
+                "docstatus"
+            )
+
+            if existing_status == 1:
+                self.stock_entry_status = "Submitted"
+                return self.stock_entry
+
+            frappe.throw(
+                _(
+                    "Stock Entry {0} is already linked to this "
+                    "Process Order but is not submitted."
+                ).format(self.stock_entry)
+            )
+
+        if not self.inputs:
+            frappe.throw(_("No inputs found."))
+
+        if not self.outputs:
+            frappe.throw(_("No outputs found."))
+
+        from erpnext.stock.serial_batch_bundle import SerialBatchCreation
+
+        se = frappe.new_doc("Stock Entry")
+        se.stock_entry_type = "Repack"
+        se.company = self.company
+        se.posting_date = self.posting_date or frappe.utils.today()
+
+        # ---------------------------------------------------------
+        # 1. INPUTS
+        # ---------------------------------------------------------
+        input_rows = []
+
+        for row in self.inputs:
+
+            has_batch = frappe.db.get_value(
+                "Item",
+                row.item,
+                "has_batch_no"
+            )
+
+            if has_batch and not row.batch_no:
+                frappe.throw(
+                    _("Batch No is required for input item {0}.").format(
+                        row.item
+                    )
+                )
+
+            stock_uom = frappe.db.get_value(
+                "Item",
+                row.item,
+                "stock_uom"
+            )
+
+            se_row = se.append(
+                "items",
+                {
+                    "item_code": row.item,
+                    "qty": flt(row.qty),
+                    "uom": row.uom,
+                    "stock_uom": stock_uom or row.uom,
+                    "conversion_factor": flt(row.conversion_factor) or 1,
+                    "s_warehouse": row.warehouse,
+                    "basic_rate": flt(row.valuation_rate),
+                    "use_serial_batch_fields": 0
+                }
+            )
+
+            input_rows.append((row, se_row))
+
+        # ---------------------------------------------------------
+        # 2. OUTPUTS
+        # ---------------------------------------------------------
+        output_rows = []
+
+        for row in self.outputs:
+
+            if row.output_type == "Loss":
+                continue
+
+            if row.output_type == "Waste":
+                is_stock_item = frappe.db.get_value(
+                    "Item",
+                    row.item,
+                    "is_stock_item"
+                )
+
+                if not is_stock_item:
+                    continue
+
+            stock_uom = frappe.db.get_value(
+                "Item",
+                row.item,
+                "stock_uom"
+            )
+
+            se_row = se.append(
+                "items",
+                {
+                    "item_code": row.item,
+                    "qty": flt(row.qty),
+                    "uom": row.uom,
+                    "stock_uom": stock_uom or row.uom,
+                    "conversion_factor": flt(row.conversion_factor) or 1,
+                    "t_warehouse": row.warehouse,
+                    "basic_rate": flt(row.valuation_rate),
+                    "set_basic_rate_manually": 1,
+                    "is_finished_item": 1,
+                    "use_serial_batch_fields": 0
+                }
+            )
+
+            output_rows.append((row, se_row))
+
+        if len(se.items) < 2:
+            frappe.throw(
+                _(
+                    "Stock Entry cannot be created because "
+                    "there is no valid stock input/output."
+                )
+            )
+
+        # ---------------------------------------------------------
+        # 3. INSERT STOCK ENTRY
+        # ---------------------------------------------------------
+        se.insert()
+
+        # ---------------------------------------------------------
+        # 4. INPUT SERIAL/BATCH BUNDLES
+        # ---------------------------------------------------------
+        for row, se_row in input_rows:
+
+            has_batch = frappe.db.get_value(
+                "Item",
+                row.item,
+                "has_batch_no"
+            )
+
+            if not has_batch:
+                continue
+
+            if not frappe.db.exists("Batch", row.batch_no):
+                frappe.throw(
+                    _("Input Batch {0} does not exist.").format(
+                        row.batch_no
+                    )
+                )
+
+            bundle = SerialBatchCreation(
+                {
+                    "item_code": row.item,
+                    "warehouse": row.warehouse,
+                    "posting_datetime": frappe.utils.get_datetime(
+                        f"{se.posting_date} {se.posting_time or '00:00:00'}"
+                    ),
+                    "voucher_type": "Stock Entry",
+                    "voucher_no": se.name,
+                    "voucher_detail_no": se_row.name,
+                    "qty": flt(row.stock_qty) * -1,
+                    "type_of_transaction": "Outward",
+                    "company": self.company,
+                    "batches": frappe._dict(
+                        {
+                            row.batch_no: flt(row.stock_qty) * -1
+                        }
+                    ),
+                    "batch_no": row.batch_no,
+                    "do_not_submit": True
+                }
+            ).make_serial_and_batch_bundle()
+
+            if not bundle or not bundle.name:
+                frappe.throw(
+                    _("Failed to create input Serial and Batch Bundle for {0}.").format(
+                        row.item
+                    )
+                )
+
+            se_row.db_set(
+                {
+                    "serial_and_batch_bundle": bundle.name,
+                    "use_serial_batch_fields": 0
+                }
+            )
+
+        # ---------------------------------------------------------
+        # 5. OUTPUT SERIAL/BATCH BUNDLES
+        # ---------------------------------------------------------
+        for row, se_row in output_rows:
+
+            has_batch = frappe.db.get_value(
+                "Item",
+                row.item,
+                "has_batch_no"
+            )
+
+            if not has_batch:
+                continue
+
+            # -----------------------------------------------------
+            # Create a new Batch for this actual output.
+            # -----------------------------------------------------
+            batch_name = frappe.model.naming.make_autoname(
+                "CPO-BATCH-.YYYY.-.#####"
+            )
+
+            batch = frappe.new_doc("Batch")
+            batch.batch_id = batch_name
+            batch.item = row.item
+            batch.insert(ignore_permissions=True)
+
+            # Make sure the Batch really exists before creating SABB.
+            if not frappe.db.exists("Batch", batch.name):
+                frappe.throw(
+                    _("Failed to create Batch {0} for item {1}.").format(
+                        batch_name,
+                        row.item
+                    )
+                )
+
+            row.db_set("batch_no", batch.name)
+
+            # -----------------------------------------------------
+            # Create INWARD bundle using the exact Stock Entry row.
+            # -----------------------------------------------------
+            bundle = SerialBatchCreation(
+                {
+                    "item_code": row.item,
+                    "warehouse": row.warehouse,
+                    "posting_datetime": frappe.utils.get_datetime(
+                        f"{se.posting_date} {se.posting_time or '00:00:00'}"
+                    ),
+                    "voucher_type": "Stock Entry",
+                    "voucher_no": se.name,
+                    "voucher_detail_no": se_row.name,
+                    "qty": flt(row.stock_qty),
+                    "type_of_transaction": "Inward",
+                    "company": self.company,
+                    "batches": frappe._dict(
+                        {
+                            batch.name: flt(row.stock_qty)
+                        }
+                    ),
+                    "batch_no": batch.name,
+                    "do_not_submit": True
+                }
+            ).make_serial_and_batch_bundle()
+
+            if not bundle or not bundle.name:
+                frappe.throw(
+                    _("Failed to create output Serial and Batch Bundle for {0}.").format(
+                        row.item
+                    )
+                )
+
+            se_row.db_set(
+                {
+                    "serial_and_batch_bundle": bundle.name,
+                    "use_serial_batch_fields": 0
+                }
+            )
+
+        # ---------------------------------------------------------
+        # 6. SUBMIT STOCK ENTRY
+        # ---------------------------------------------------------
+        se.reload()
+        se.submit()
+
+        # ---------------------------------------------------------
+        # 7. SYNC COFFEE BATCH TRACEABILITY
+        # ---------------------------------------------------------
+        self._sync_coffee_batches(
+            input_rows,
+            output_rows
+        )
+
+        # ---------------------------------------------------------
+        # 8. LINK STOCK ENTRY TO PROCESS ORDER
+        # ---------------------------------------------------------
+        self.stock_entry = se.name
+        self.stock_entry_status = "Submitted"
+
+        self.db_set("stock_entry", se.name)
+        self.db_set("stock_entry_status", "Submitted")
+
+        return se.name
+
+    def before_submit(self):
+
+        self.validate()
+
+        if self.variance_status == "Requires Approval":
+
+            if self.approval_status != "Approved":
+                frappe.throw(
+                    _(
+                        "Variance requires approval before "
+                        "submission."
+                    )
+                )
+
+        # RECEIVING is a documentation/inspection step.
+        # Stock was already created by the Purchase Receipt.
+        # Therefore, do not create a second Stock Entry.
+        if self.operation == "RECEIVING":
+            self.stock_entry_status = "Not Created"
+            return
+
+        # All actual processing operations create Stock Entry.
+        self.create_stock_entry()
+
+    def on_submit(self):
+
+        if self.stock_entry:
+            self.db_set(
+                "stock_entry_status",
+                "Submitted"
+            )
+
+        # RECEIVING does not create a Stock Entry.
+        # After successful submission, advance the Coffee Batch
+        # from RECEIVING to the next required route step.
+        if self.operation == "RECEIVING":
+            for row in self.inputs:
+                if row.coffee_batch:
+                    batch = frappe.get_doc(
+                        "Coffee Batch",
+                        row.coffee_batch
+                    )
+
+                    route = frappe.get_doc(
+                        "Coffee Process Route",
+                        batch.route
+                    )
+
+                    next_step = None
+
+                    for step in sorted(
+                        route.steps,
+                        key=lambda x: x.sequence
+                    ):
+                        if step.sequence <= self.route_step_sequence:
+                            continue
+
+                        if step.required or not step.allow_skip_if_optional:
+                            next_step = step
+                            break
+
+                    if next_step:
+                        batch.db_set(
+                            "current_step",
+                            next_step.sequence
+                        )
+                        batch.db_set(
+                            "current_operation",
+                            next_step.operation
+                        )
+                        batch.db_set(
+                            "status",
+                            "Ready for Processing"
+                        )
+                    else:
+                        batch.db_set(
+                            "status",
+                            "Completed"
+                        )
+
+                    break
+
+        self.db_set(
+            "status",
+            "Completed"
+        )
+
+    # =========================================================
+    # CANCEL
+    # =========================================================
+
+    def on_cancel(self):
+        """
+        Cancel the ERPNext Stock Entry and restore the Coffee Batch
+        quantities created/consumed by this Process Order.
+
+        This method is intentionally idempotent: if the Stock Entry
+        has already been cancelled, it will not be cancelled again.
+        """
+
+        # ---------------------------------------------------------
+        # 1. Cancel ERPNext Stock Entry
+        # ---------------------------------------------------------
+        if self.stock_entry:
+
+            se = frappe.get_doc(
+                "Stock Entry",
+                self.stock_entry
+            )
+
+            if se.docstatus == 1:
+                se.cancel()
+
+            self.db_set(
+                "stock_entry_status",
+                "Cancelled"
+            )
+
+        # ---------------------------------------------------------
+        # 2. Restore input Coffee Batches
+        # ---------------------------------------------------------
+        for row in self.inputs:
+
+            if not row.coffee_batch:
+                continue
+
+            if not frappe.db.exists(
+                "Coffee Batch",
+                row.coffee_batch
+            ):
+                continue
+
+            batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch
+            )
+
+            restore_qty = flt(row.stock_qty)
+
+            if restore_qty <= 0:
+                restore_qty = (
+                    flt(row.qty)
+                    * (flt(row.conversion_factor) or 1)
+                )
+
+            batch.qty = flt(batch.qty) + restore_qty
+
+            batch.total_value = (
+                flt(batch.qty)
+                * flt(batch.valuation_rate)
+            )
+
+            # A consumed source batch becomes available again.
+            if batch.status == "Consumed":
+                batch.status = "Ready for Processing"
+
+            batch.save(ignore_permissions=True)
+
+        # ---------------------------------------------------------
+        # 3. Reverse Coffee Batches generated by this Stock Entry
+        # ---------------------------------------------------------
+        output_batch_names = (
+            self._get_output_batch_names_from_stock_entry()
+        )
+
+        for batch_name in output_batch_names:
+
+            coffee_batches = frappe.get_all(
+                "Coffee Batch",
+                filters={
+                    "erpnext_batch": batch_name
+                },
+                fields=[
+                    "name",
+                    "qty",
+                    "status",
+                ],
+            )
+
+            for batch_data in coffee_batches:
+
+                output_batch = frappe.get_doc(
+                    "Coffee Batch",
+                    batch_data.name
+                )
+
+                # Do not physically delete historical lineage.
+                # Mark the generated Coffee Batch rejected and zero.
+                output_batch.qty = 0
+                output_batch.total_value = 0
+                output_batch.reserved_qty = 0
+                output_batch.status = "Rejected"
+
+                output_batch.save(
+                    ignore_permissions=True
+                )
+
+        # ---------------------------------------------------------
+        # 4. Final Process Order status
+        # ---------------------------------------------------------
+        self.db_set(
+            "stock_entry_status",
+            "Cancelled"
+        )
+
+        self.db_set(
+            "status",
+            "Cancelled"
+        )

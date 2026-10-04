@@ -1,0 +1,311 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Fermentation Order",
+ "module": "Coffee Processing",
+ "autoname": "FER-.YYYY.-.#####",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "istable": 0,
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "بيانات التخمير"
+  },
+  {
+   "fieldname": "fermentation_method",
+   "fieldtype": "Select",
+   "label": "طريقة التخمير",
+   "options": "Dry\nWet\nSemi-Washed\nAnaerobic\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "storage_unit",
+   "fieldtype": "Link",
+   "label": "وحدة التخمير",
+   "options": "Coffee Storage Unit"
+  },
+  {
+   "fieldname": "barrel",
+   "fieldtype": "Link",
+   "label": "البرميل",
+   "options": "Coffee Fermentation Barrel"
+  },
+  {
+   "fieldname": "start_datetime",
+   "fieldtype": "Datetime",
+   "label": "بداية التخمير",
+   "options": 1
+  },
+  {
+   "fieldname": "end_datetime",
+   "fieldtype": "Datetime",
+   "label": "نهاية التخمير"
+  },
+  {
+   "fieldname": "duration_hours",
+   "fieldtype": "Float",
+   "label": "مدة التخمير بالساعات"
+  },
+  {
+   "fieldname": "temperature_start",
+   "fieldtype": "Float",
+   "label": "درجة الحرارة عند البداية"
+  },
+  {
+   "fieldname": "temperature_end",
+   "fieldtype": "Float",
+   "label": "درجة الحرارة عند النهاية"
+  },
+  {
+   "fieldname": "water_qty",
+   "fieldtype": "Float",
+   "label": "كمية المياه"
+  },
+  {
+   "fieldname": "water_cost",
+   "fieldtype": "Currency",
+   "label": "تكلفة المياه"
+  },
+  {
+   "fieldname": "labor_hours",
+   "fieldtype": "Float",
+   "label": "ساعات العمالة"
+  },
+  {
+   "fieldname": "energy_kwh",
+   "fieldtype": "Float",
+   "label": "استهلاك الطاقة"
+  },
+  {
+   "fieldname": "fermentation_notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات التخمير"
+  },
+  {
+   "fieldname": "operation_no",
+   "fieldtype": "Data",
+   "label": "رقم العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "تاريخ العملية",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nReady\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "label": "المشغل",
+   "options": "User"
+  },
+  {
+   "fieldname": "previous_operation",
+   "fieldtype": "Data",
+   "label": "العملية السابقة"
+  },
+  {
+   "fieldname": "next_operation",
+   "fieldtype": "Data",
+   "label": "العملية التالية"
+  },
+  {
+   "fieldname": "inputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإدخال",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإخراج",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "input_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المدخلات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المخرجات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loss_qty",
+   "fieldtype": "Float",
+   "label": "الفاقد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "yield_percent",
+   "fieldtype": "Percent",
+   "label": "نسبة الاستخلاص",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "التكاليف"
+  },
+  {
+   "fieldname": "costs",
+   "fieldtype": "Table",
+   "label": "تفاصيل التكاليف",
+   "options": "Coffee Operation Cost"
+  },
+  {
+   "fieldname": "direct_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة المباشرة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overhead_cost",
+   "fieldtype": "Currency",
+   "label": "التكاليف غير المباشرة"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "إجمالي تكلفة العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "تكلفة الكيلو",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "process_order",
+   "fieldtype": "Link",
+   "label": "أمر المعالجة الداخلي",
+   "options": "Coffee Process Order",
+   "hidden": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "حركة المخزون",
+   "options": "Stock Entry"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Fermentation User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "field_order": [
+  "section_basic",
+  "fermentation_method",
+  "storage_unit",
+  "barrel",
+  "start_datetime",
+  "end_datetime",
+  "duration_hours",
+  "temperature_start",
+  "temperature_end",
+  "water_qty",
+  "water_cost",
+  "labor_hours",
+  "energy_kwh",
+  "fermentation_notes",
+  "operation_no",
+  "posting_date",
+  "company",
+  "branch",
+  "status",
+  "operator",
+  "previous_operation",
+  "next_operation",
+  "inputs",
+  "outputs",
+  "input_qty_total",
+  "output_qty_total",
+  "loss_qty",
+  "yield_percent",
+  "section_cost",
+  "costs",
+  "direct_cost",
+  "overhead_cost",
+  "total_cost",
+  "cost_per_kg",
+  "cost_center",
+  "process_order",
+  "stock_entry",
+  "remarks"
+ ]
+}

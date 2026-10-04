@@ -1,0 +1,19 @@
+{
+    "doctype": "DocType",
+    "name": "Coffee Processing Input",
+    "module": "Coffee Processing",
+    "engine": "InnoDB",
+    "istable": 1,
+    "field_order": ["item_code", "batch", "warehouse", "planned_qty", "actual_qty", "uom", "rate", "amount", "cost_center"],
+    "fields": [
+        {"fieldname": "item_code", "fieldtype": "Data", "label": "كود الصنف", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "batch", "fieldtype": "Link", "label": "الدفعة", "options": "Coffee Batch", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "warehouse", "fieldtype": "Link", "label": "المخزن", "options": "Warehouse", "in_list_view": 1},
+        {"fieldname": "planned_qty", "fieldtype": "Float", "label": "الكمية المخططة", "reqd": 1, "in_list_view": 1},
+        {"fieldname": "actual_qty", "fieldtype": "Float", "label": "الكمية الفعلية", "in_list_view": 1},
+        {"fieldname": "uom", "fieldtype": "Data", "label": "الوحدة", "default": "KG"},
+        {"fieldname": "rate", "fieldtype": "Currency", "label": "السعر", "read_only": 1},
+        {"fieldname": "amount", "fieldtype": "Currency", "label": "المبلغ", "read_only": 1, "in_list_view": 1},
+        {"fieldname": "cost_center", "fieldtype": "Link", "label": "مركز التكلفة", "options": "Cost Center"}
+    ]
+}

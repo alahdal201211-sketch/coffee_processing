@@ -1,0 +1,144 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Cost Center Mapping",
+ "module": "Coffee Processing",
+ "engine": "InnoDB",
+ "field_order": [
+  "operation",
+  "company",
+  "branch",
+  "column_break_1",
+  "cost_center",
+  "active",
+  "section_accounts",
+  "wip_account",
+  "expense_account"
+ ],
+ "fields": [
+  {
+   "fieldname": "operation",
+   "fieldtype": "Link",
+   "label": "العملية",
+   "options": "Coffee Operation Master",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "نشط",
+   "default": "1",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_accounts",
+   "fieldtype": "Section Break",
+   "label": "الحسابات"
+  },
+  {
+   "fieldname": "wip_account",
+   "fieldtype": "Link",
+   "label": "حساب WIP",
+   "options": "Account"
+  },
+  {
+   "fieldname": "expense_account",
+   "fieldtype": "Link",
+   "label": "حساب المصروفات",
+   "options": "Account"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Accountant",
+   "read": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Financial Controller",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1
+}

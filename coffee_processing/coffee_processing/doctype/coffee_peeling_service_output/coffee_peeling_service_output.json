@@ -1,0 +1,101 @@
+{
+  "name": "Coffee Peeling Service Output",
+  "creation": "2026-09-29 00:00:00",
+  "modified": "2026-09-29 00:00:00",
+  "modified_by": "Administrator",
+  "owner": "Administrator",
+  "docstatus": 0,
+  "idx": 0,
+  "issingle": 0,
+  "is_virtual": 0,
+  "is_tree": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 0,
+  "module": "Coffee Processing",
+  "autoname": null,
+  "engine": "InnoDB",
+  "is_submittable": 0,
+  "custom": 0,
+  "allow_rename": 1,
+  "quick_entry": 0,
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "row_format": "Dynamic",
+  "doctype": "DocType",
+  "fields": [
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "الصنف الناتج",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "المخزن",
+      "options": "Warehouse",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "الكمية (كجم)",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "percentage",
+      "fieldtype": "Percent",
+      "label": "النسبة %",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "output_type",
+      "fieldtype": "Select",
+      "label": "نوع الناتج",
+      "options": "Main Product\nBy-Product\nWaste\nLoss",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "coffee_grade",
+      "fieldtype": "Link",
+      "label": "الدرجة",
+      "options": "Coffee Grade Master",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch ERPNext",
+      "options": "Batch",
+      "read_only": 1
+    },
+    {
+      "fieldname": "coffee_batch",
+      "fieldtype": "Link",
+      "label": "دفعة الناتج",
+      "options": "Coffee Batch",
+      "read_only": 1
+    },
+    {
+      "fieldname": "valuation_rate",
+      "fieldtype": "Currency",
+      "label": "تكلفة الوحدة",
+      "read_only": 1
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "القيمة",
+      "read_only": 1
+    }
+  ],
+  "permissions": [],
+  "links": []
+}

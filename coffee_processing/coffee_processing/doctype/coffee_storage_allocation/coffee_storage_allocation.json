@@ -1,0 +1,138 @@
+{
+ "name": "Coffee Storage Allocation",
+ "creation": "2026-09-29 00:00:00",
+ "modified": "2026-09-29 00:00:00",
+ "modified_by": "Administrator",
+ "owner": "Administrator",
+ "docstatus": 0,
+ "idx": 0,
+ "issingle": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "istable": 1,
+ "editable_grid": 1,
+ "track_changes": 0,
+ "module": "Coffee Processing",
+ "autoname": null,
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "custom": 0,
+ "allow_rename": 1,
+ "quick_entry": 0,
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "row_format": "Dynamic",
+ "doctype": "DocType",
+ "fields": [
+  {
+   "fieldname": "storage_unit",
+   "fieldtype": "Link",
+   "label": "وحدة التخزين",
+   "options": "Coffee Storage Unit",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "storage_type",
+   "fieldtype": "Select",
+   "label": "النوع",
+   "options": "Fermentation Barrel\nDrying Bed",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "coffee_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة",
+   "options": "Coffee Batch",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "allocated_qty",
+   "fieldtype": "Float",
+   "label": "الكمية (كجم)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "capacity_kg",
+   "fieldtype": "Float",
+   "label": "السعة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "start_datetime",
+   "fieldtype": "Datetime",
+   "label": "وقت البداية"
+  },
+  {
+   "fieldname": "end_datetime",
+   "fieldtype": "Datetime",
+   "label": "وقت النهاية"
+  },
+  {
+   "fieldname": "temperature",
+   "fieldtype": "Float",
+   "label": "درجة الحرارة"
+  },
+  {
+   "fieldname": "moisture",
+   "fieldtype": "Float",
+   "label": "الرطوبة %"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Planned\nOccupied\nReleased",
+   "default": "Planned",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Warehouse User",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "links": []
+}

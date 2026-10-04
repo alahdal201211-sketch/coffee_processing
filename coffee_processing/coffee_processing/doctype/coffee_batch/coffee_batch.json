@@ -1,0 +1,520 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Batch",
+ "module": "Coffee Processing",
+ "autoname": "CB-.YYYY.-.#####",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_identification",
+  "custom_item_code",
+  "item_name",
+  "column_break_1",
+  "coffee_type",
+  "coffee_grade",
+  "is_grade_batch",
+  "section_company",
+  "company",
+  "branch",
+  "section_source",
+  "source_type",
+  "supplier",
+  "purchase_receipt",
+  "column_break_2",
+  "parent_batch",
+  "split_from",
+  "merged_into",
+  "section_route",
+  "route",
+  "current_step",
+  "current_operation",
+  "column_break_3",
+  "status",
+  "priority",
+  "section_stock_info",
+  "current_warehouse",
+  "current_location",
+  "column_break_4",
+  "qty",
+  "valuation_rate",
+  "cost_per_kg",
+  "total_value",
+  "reserved_qty",
+  "section_cost_center",
+  "cost_center",
+  "section_quality",
+  "quality_status",
+  "cupping_status",
+  "column_break_6",
+  "last_quality_inspection",
+  "last_cupping",
+  "section_audit",
+  "created_by",
+  "creation_date",
+  "section_notes",
+  "notes",
+  "erpnext_batch"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_identification",
+   "fieldtype": "Section Break",
+   "label": "التعريف"
+  },
+  {
+   "fieldname": "custom_item_code",
+   "fieldtype": "Data",
+   "label": "كود الصنف",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "مثال: CLEAN-SPECIALTY-G14"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "اسم الصنف",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "coffee_type",
+   "fieldtype": "Select",
+   "label": "نوع البن",
+   "options": "Specialty\nCommercial\nDefects\nBy-Product\nMixed",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "coffee_grade",
+   "fieldtype": "Link",
+   "label": "الدرجة",
+   "options": "Coffee Grade Master",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "is_grade_batch",
+   "fieldtype": "Check",
+   "label": "دفعة درجة",
+   "read_only": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_source",
+   "fieldtype": "Section Break",
+   "label": "المصدر",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "source_type",
+   "fieldtype": "Select",
+   "label": "نوع المصدر",
+   "options": "Purchase\nProcessing\nSplit\nMerge\nBlend\nOpening\nGrading",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "المورد",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "purchase_receipt",
+   "fieldtype": "Link",
+   "label": "إذن الاستلام",
+   "options": "Purchase Receipt",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "parent_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة الأم",
+   "options": "Coffee Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "split_from",
+   "fieldtype": "Link",
+   "label": "مقسمة من",
+   "options": "Coffee Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "merged_into",
+   "fieldtype": "Link",
+   "label": "مدمجة في",
+   "options": "Coffee Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_route",
+   "fieldtype": "Section Break",
+   "label": "مسار المعالجة"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Link",
+   "label": "المسار",
+   "options": "Coffee Process Route",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "current_step",
+   "fieldtype": "Int",
+   "label": "الخطوة الحالية",
+   "read_only": 1,
+   "default": "0",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "current_operation",
+   "fieldtype": "Link",
+   "label": "العملية التالية",
+   "options": "Coffee Operation Master",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Received\nReady for Processing\nIn Process\nGraded\nCompleted\nSold\nRejected\nConsumed",
+   "default": "Received",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "الأولوية",
+   "options": "Low\nMedium\nHigh\nUrgent",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "section_stock_info",
+   "fieldtype": "Section Break",
+   "label": "معلومات المخزون (داخلي)"
+  },
+  {
+   "fieldname": "current_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن الحالي",
+   "options": "Warehouse",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "current_location",
+   "fieldtype": "Data",
+   "label": "الموقع الحالي",
+   "description": "بديل نصي للمخزن"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "الكمية الحالية",
+   "default": "0",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "valuation_rate",
+   "fieldtype": "Currency",
+   "label": "سعر التقييم",
+   "default": "0"
+  },
+  {
+   "fieldname": "cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "التكلفة لكل كجم",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "total_value",
+   "fieldtype": "Currency",
+   "label": "القيمة الإجمالية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reserved_qty",
+   "fieldtype": "Float",
+   "label": "الكمية المحجوزة",
+   "read_only": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "section_cost_center",
+   "fieldtype": "Section Break",
+   "label": "المحاسبة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_quality",
+   "fieldtype": "Section Break",
+   "label": "الجودة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "quality_status",
+   "fieldtype": "Select",
+   "label": "حالة الجودة",
+   "options": "Pending\nApproved\nRejected\nNot Required",
+   "default": "Pending",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cupping_status",
+   "fieldtype": "Select",
+   "label": "حالة التذوق",
+   "options": "Pending\nCupped\nApproved\nRejected\nNot Required",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_quality_inspection",
+   "fieldtype": "Link",
+   "label": "آخر فحص جودة",
+   "options": "Quality Inspection",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_cupping",
+   "fieldtype": "Link",
+   "label": "آخر تذوق",
+   "options": "Coffee Cupping",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_audit",
+   "fieldtype": "Section Break",
+   "label": "التدقيق",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "أنشئ بواسطة",
+   "options": "User",
+   "read_only": 1,
+   "default": "__user"
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Date",
+   "label": "تاريخ الإنشاء",
+   "read_only": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "section_notes",
+   "fieldtype": "Section Break",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "erpnext_batch",
+   "fieldtype": "Link",
+   "label": "دفعة المخزون ERPNext",
+   "options": "Batch",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "purchase_sources",
+   "fieldtype": "Table",
+   "label": "Purchase Sources",
+   "options": "Coffee Batch Purchase Source",
+   "description": "Purchase documents and source details for this coffee batch"
+  },
+  {
+   "fieldname": "source_batches",
+   "fieldtype": "Table",
+   "label": "Source Batches",
+   "options": "Coffee Batch Source",
+   "description": "Source batches consumed to create this batch"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Processing User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Receiving User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Quality User",
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Grading User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Packaging User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Accountant",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Batch User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Warehouse User",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Financial Controller",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1,
+ "title_field": "custom_item_code",
+ "search_fields": "custom_item_code,coffee_grade,current_operation",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "show_name_in_global_search": 1
+}

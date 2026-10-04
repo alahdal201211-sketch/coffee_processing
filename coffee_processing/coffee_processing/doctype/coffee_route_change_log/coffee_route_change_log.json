@@ -1,0 +1,318 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Route Change Log",
+ "module": "Coffee Processing",
+ "autoname": "format:RCL-{YYYY}-{#####}",
+ "engine": "InnoDB",
+ "field_order": [
+  "coffee_batch",
+  "change_date",
+  "change_type",
+  "status",
+  "section_company",
+  "company",
+  "branch",
+  "section_old",
+  "old_route",
+  "old_step",
+  "old_operation",
+  "old_warehouse",
+  "old_status",
+  "section_new",
+  "new_route",
+  "new_step",
+  "new_operation",
+  "new_warehouse",
+  "new_status",
+  "section_reason",
+  "reason",
+  "reason_category",
+  "impact_assessment",
+  "corrective_action",
+  "section_impact",
+  "affects_quality",
+  "affects_cost",
+  "affects_traceability",
+  "column_break_1",
+  "cost_impact",
+  "quality_impact",
+  "section_approval",
+  "changed_by",
+  "approved_by",
+  "approval_date",
+  "approval_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "coffee_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة",
+   "options": "Coffee Batch",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "change_date",
+   "fieldtype": "Date",
+   "label": "تاريخ التغيير",
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "change_type",
+   "fieldtype": "Select",
+   "label": "نوع التغيير",
+   "options": "Route Change\nStep Skip\nStep Reorder\nOperation Change\nWarehouse Change",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nPending Approval\nApproved\nRejected",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_old",
+   "fieldtype": "Section Break",
+   "label": "القديم",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "old_route",
+   "fieldtype": "Link",
+   "label": "المسار القديم",
+   "options": "Coffee Process Route",
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_step",
+   "fieldtype": "Int",
+   "label": "الخطوة القديمة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_operation",
+   "fieldtype": "Link",
+   "label": "العملية القديمة",
+   "options": "Coffee Operation Master",
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن القديم",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_status",
+   "fieldtype": "Data",
+   "label": "الحالة القديمة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_new",
+   "fieldtype": "Section Break",
+   "label": "الجديد"
+  },
+  {
+   "fieldname": "new_route",
+   "fieldtype": "Link",
+   "label": "المسار الجديد",
+   "options": "Coffee Process Route"
+  },
+  {
+   "fieldname": "new_step",
+   "fieldtype": "Int",
+   "label": "الخطوة الجديدة"
+  },
+  {
+   "fieldname": "new_operation",
+   "fieldtype": "Link",
+   "label": "العملية الجديدة",
+   "options": "Coffee Operation Master"
+  },
+  {
+   "fieldname": "new_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن الجديد",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "new_status",
+   "fieldtype": "Data",
+   "label": "الحالة الجديدة"
+  },
+  {
+   "fieldname": "section_reason",
+   "fieldtype": "Section Break",
+   "label": "السبب"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "السبب",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reason_category",
+   "fieldtype": "Select",
+   "label": "فئة السبب",
+   "options": "\nQuality Issue\nEquipment Failure\nCost Optimization\nCustomer Request\nRegulatory\nOther"
+  },
+  {
+   "fieldname": "impact_assessment",
+   "fieldtype": "Small Text",
+   "label": "تقييم الأثر"
+  },
+  {
+   "fieldname": "corrective_action",
+   "fieldtype": "Small Text",
+   "label": "الإجراء التصحيحي"
+  },
+  {
+   "fieldname": "section_impact",
+   "fieldtype": "Section Break",
+   "label": "الأثر",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "affects_quality",
+   "fieldtype": "Check",
+   "label": "يؤثر على الجودة"
+  },
+  {
+   "fieldname": "affects_cost",
+   "fieldtype": "Check",
+   "label": "يؤثر على التكلفة"
+  },
+  {
+   "fieldname": "affects_traceability",
+   "fieldtype": "Check",
+   "label": "يؤثر على التتبع"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_impact",
+   "fieldtype": "Currency",
+   "label": "الأثر على التكلفة"
+  },
+  {
+   "fieldname": "quality_impact",
+   "fieldtype": "Small Text",
+   "label": "الأثر على الجودة"
+  },
+  {
+   "fieldname": "section_approval",
+   "fieldtype": "Section Break",
+   "label": "الاعتماد",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "changed_by",
+   "fieldtype": "Link",
+   "label": "غير بواسطة",
+   "options": "User",
+   "default": "__user",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "اعتمد بواسطة",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "تاريخ الاعتماد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_notes",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات الاعتماد"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Processing User",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

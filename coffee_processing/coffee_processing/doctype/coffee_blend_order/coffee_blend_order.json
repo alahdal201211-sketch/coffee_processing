@@ -1,0 +1,381 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Blend Order",
+ "module": "Coffee Processing",
+ "autoname": "BLN-.YYYY.-.#####",
+ "is_submittable": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "blend_no",
+  "blend_name",
+  "blend_type",
+  "column_break_1",
+  "status",
+  "blend_date",
+  "priority",
+  "section_company",
+  "company",
+  "branch",
+  "section_target",
+  "target_item_code",
+  "target_batch",
+  "target_warehouse",
+  "column_break_2",
+  "total_qty",
+  "uom",
+  "section_cost",
+  "cost_center",
+  "estimated_cost",
+  "actual_cost",
+  "column_break_3",
+  "cost_per_kg",
+  "section_sources",
+  "sources",
+  "section_quality",
+  "requires_quality",
+  "requires_cupping",
+  "column_break_4",
+  "quality_status",
+  "cupping_status",
+  "section_approval",
+  "requested_by",
+  "approved_by",
+  "approval_date",
+  "rejection_reason",
+  "section_execution",
+  "stock_entry",
+  "journal_entry",
+  "column_break_5",
+  "actual_start_date",
+  "actual_end_date",
+  "completed_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "blend_no",
+   "fieldtype": "Data",
+   "label": "رقم الخلطة",
+   "read_only": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "blend_name",
+   "fieldtype": "Data",
+   "label": "اسم الخلطة",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "blend_type",
+   "fieldtype": "Select",
+   "label": "نوع الخلطة",
+   "options": "House Blend\nSignature Blend\nEspresso Blend\nSeasonal Blend\nCustom",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nSubmitted\nApproved\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "blend_date",
+   "fieldtype": "Date",
+   "label": "تاريخ الخلط",
+   "default": "Today"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "الأولوية",
+   "options": "Low\nMedium\nHigh\nUrgent",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "section_company",
+   "fieldtype": "Section Break",
+   "label": "الشركة والفرع"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_target",
+   "fieldtype": "Section Break",
+   "label": "الهدف"
+  },
+  {
+   "fieldname": "target_item_code",
+   "fieldtype": "Data",
+   "label": "كود الصنف المستهدف",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_batch",
+   "fieldtype": "Link",
+   "label": "الدفعة المستهدفة",
+   "options": "Coffee Batch"
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "المخزن المستهدف",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "إجمالي الكمية",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Data",
+   "label": "الوحدة",
+   "default": "KG"
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "التكلفة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center",
+   "reqd": 1
+  },
+  {
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة التقديرية"
+  },
+  {
+   "fieldname": "actual_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة الفعلية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "التكلفة لكل كجم",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_sources",
+   "fieldtype": "Section Break",
+   "label": "المصادر"
+  },
+  {
+   "fieldname": "sources",
+   "fieldtype": "Table",
+   "label": "المصادر",
+   "options": "Coffee Blend Source",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_quality",
+   "fieldtype": "Section Break",
+   "label": "الجودة",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "requires_quality",
+   "fieldtype": "Check",
+   "label": "يتطلب جودة"
+  },
+  {
+   "fieldname": "requires_cupping",
+   "fieldtype": "Check",
+   "label": "يتطلب تذوق"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quality_status",
+   "fieldtype": "Select",
+   "label": "حالة الجودة",
+   "options": "Pending\nApproved\nRejected\nNot Required",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "cupping_status",
+   "fieldtype": "Select",
+   "label": "حالة التذوق",
+   "options": "Pending\nCupped\nApproved\nRejected\nNot Required",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "section_approval",
+   "fieldtype": "Section Break",
+   "label": "الاعتماد",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "label": "طلب بواسطة",
+   "options": "User",
+   "default": "__user",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "اعتمد بواسطة",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "تاريخ الاعتماد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Small Text",
+   "label": "سبب الرفض"
+  },
+  {
+   "fieldname": "section_execution",
+   "fieldtype": "Section Break",
+   "label": "التنفيذ",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "actual_start_date",
+   "fieldtype": "Datetime",
+   "label": "تاريخ البدء الفعلي",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_end_date",
+   "fieldtype": "Datetime",
+   "label": "تاريخ الانتهاء الفعلي",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "أكمل بواسطة",
+   "options": "User",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Coffee Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Coffee Processing User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Blending User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "track_changes": 1,
+ "title_field": "blend_name",
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

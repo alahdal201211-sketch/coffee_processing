@@ -1,0 +1,311 @@
+{
+ "doctype": "DocType",
+ "name": "Coffee Drying Order",
+ "module": "Coffee Processing",
+ "autoname": "DRY-.YYYY.-.#####",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "istable": 0,
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "بيانات التجفيف"
+  },
+  {
+   "fieldname": "drying_method",
+   "fieldtype": "Select",
+   "label": "طريقة التجفيف",
+   "options": "Sun Drying\nMechanical Drying\nRaised Bed\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "storage_unit",
+   "fieldtype": "Link",
+   "label": "وحدة التجفيف",
+   "options": "Coffee Storage Unit"
+  },
+  {
+   "fieldname": "drying_bed",
+   "fieldtype": "Link",
+   "label": "سرير التجفيف",
+   "options": "Coffee Drying Bed"
+  },
+  {
+   "fieldname": "start_datetime",
+   "fieldtype": "Datetime",
+   "label": "بداية التجفيف",
+   "options": 1
+  },
+  {
+   "fieldname": "end_datetime",
+   "fieldtype": "Datetime",
+   "label": "نهاية التجفيف"
+  },
+  {
+   "fieldname": "duration_hours",
+   "fieldtype": "Float",
+   "label": "مدة التجفيف بالساعات"
+  },
+  {
+   "fieldname": "moisture_start",
+   "fieldtype": "Percent",
+   "label": "الرطوبة عند البداية"
+  },
+  {
+   "fieldname": "moisture_end",
+   "fieldtype": "Percent",
+   "label": "الرطوبة عند النهاية"
+  },
+  {
+   "fieldname": "weather_condition",
+   "fieldtype": "Data",
+   "label": "حالة الطقس"
+  },
+  {
+   "fieldname": "turning_count",
+   "fieldtype": "Int",
+   "label": "عدد مرات التقليب"
+  },
+  {
+   "fieldname": "labor_hours",
+   "fieldtype": "Float",
+   "label": "ساعات العمالة"
+  },
+  {
+   "fieldname": "energy_kwh",
+   "fieldtype": "Float",
+   "label": "استهلاك الطاقة"
+  },
+  {
+   "fieldname": "drying_notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات التجفيف"
+  },
+  {
+   "fieldname": "operation_no",
+   "fieldtype": "Data",
+   "label": "رقم العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "تاريخ العملية",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nReady\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "label": "المشغل",
+   "options": "User"
+  },
+  {
+   "fieldname": "previous_operation",
+   "fieldtype": "Data",
+   "label": "العملية السابقة"
+  },
+  {
+   "fieldname": "next_operation",
+   "fieldtype": "Data",
+   "label": "العملية التالية"
+  },
+  {
+   "fieldname": "inputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإدخال",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "دفعات الإخراج",
+   "options": "Coffee Operation Batch"
+  },
+  {
+   "fieldname": "input_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المدخلات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المخرجات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loss_qty",
+   "fieldtype": "Float",
+   "label": "الفاقد",
+   "read_only": 1
+  },
+  {
+   "fieldname": "yield_percent",
+   "fieldtype": "Percent",
+   "label": "نسبة الاستخلاص",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "التكاليف"
+  },
+  {
+   "fieldname": "costs",
+   "fieldtype": "Table",
+   "label": "تفاصيل التكاليف",
+   "options": "Coffee Operation Cost"
+  },
+  {
+   "fieldname": "direct_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة المباشرة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overhead_cost",
+   "fieldtype": "Currency",
+   "label": "التكاليف غير المباشرة"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "إجمالي تكلفة العملية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_per_kg",
+   "fieldtype": "Currency",
+   "label": "تكلفة الكيلو",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "process_order",
+   "fieldtype": "Link",
+   "label": "أمر المعالجة الداخلي",
+   "options": "Coffee Process Order",
+   "hidden": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "حركة المخزون",
+   "options": "Stock Entry"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Drying User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "field_order": [
+  "section_basic",
+  "drying_method",
+  "storage_unit",
+  "drying_bed",
+  "start_datetime",
+  "end_datetime",
+  "duration_hours",
+  "moisture_start",
+  "moisture_end",
+  "weather_condition",
+  "turning_count",
+  "labor_hours",
+  "energy_kwh",
+  "drying_notes",
+  "operation_no",
+  "posting_date",
+  "company",
+  "branch",
+  "status",
+  "operator",
+  "previous_operation",
+  "next_operation",
+  "inputs",
+  "outputs",
+  "input_qty_total",
+  "output_qty_total",
+  "loss_qty",
+  "yield_percent",
+  "section_cost",
+  "costs",
+  "direct_cost",
+  "overhead_cost",
+  "total_cost",
+  "cost_per_kg",
+  "cost_center",
+  "process_order",
+  "stock_entry",
+  "remarks"
+ ]
+}

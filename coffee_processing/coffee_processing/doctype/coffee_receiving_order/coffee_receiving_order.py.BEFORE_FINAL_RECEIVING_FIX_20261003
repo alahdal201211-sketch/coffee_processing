@@ -1,0 +1,700 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+import frappe
+from frappe import _
+from frappe.model.document import Document
+from frappe.utils import flt, nowdate
+
+
+SOURCE_WAREHOUSE = "CRW - مخزن البن الخام - الاهدل للبن - بن1"
+
+RAW_ITEM_NAMES = {
+    "001",       # بن خام
+    "COF-004",   # بن قاصي
+}
+
+RAW_ITEM_LABELS = {
+    "001": "بن خام",
+    "COF-004": "بن قاصي",
+}
+
+
+class CoffeeReceivingOrder(Document):
+
+    def validate(self):
+        self._validate_header()
+        self._load_receiving_settings()
+        self._validate_inputs()
+        self._validate_single_item()
+        self._validate_source_warehouse()
+        self._validate_quantities()
+        self._calculate_totals()
+
+    # ------------------------------------------------------------------
+    # HEADER
+    # ------------------------------------------------------------------
+
+    def _validate_header(self):
+        if not self.company:
+            frappe.throw(_("الشركة مطلوبة."))
+
+        if not self.supplier:
+            frappe.throw(_("المورد مطلوب."))
+
+        if not self.posting_date:
+            self.posting_date = nowdate()
+
+        if not self.inputs:
+            frappe.throw(_("يجب إضافة دفعة استلام واحدة على الأقل."))
+
+    # ------------------------------------------------------------------
+    # SETTINGS
+    # ------------------------------------------------------------------
+
+    def _load_receiving_settings(self):
+        filters = {
+            "company": self.company,
+            "active": 1,
+        }
+
+        if self.branch:
+            filters["branch"] = self.branch
+
+        settings_name = frappe.db.get_value(
+            "Coffee Receiving Settings",
+            filters,
+            "name",
+            order_by="modified desc",
+        )
+
+        if not settings_name:
+            frappe.throw(
+                _(
+                    "لا توجد إعدادات استلام فعالة للشركة {0}"
+                    "{1}. قم بإنشاء Coffee Receiving Settings أولاً."
+                ).format(
+                    self.company,
+                    _(" والفرع {0}").format(self.branch)
+                    if self.branch
+                    else "",
+                )
+            )
+
+        settings = frappe.get_doc(
+            "Coffee Receiving Settings",
+            settings_name,
+        )
+
+        if not settings.source_warehouse:
+            frappe.throw(_("مخزن المصدر في إعدادات الاستلام غير محدد."))
+
+        if not settings.target_warehouse:
+            frappe.throw(_("مخزن الهدف في إعدادات الاستلام غير محدد."))
+
+        if settings.source_warehouse == settings.target_warehouse:
+            frappe.throw(
+                _("مخزن المصدر ومخزن الهدف يجب أن يكونا مختلفين.")
+            )
+
+        self._receiving_settings = settings
+        self._configured_source_warehouse = settings.source_warehouse
+        self._configured_target_warehouse = settings.target_warehouse
+
+    # ------------------------------------------------------------------
+    # INPUT VALIDATION
+    # ------------------------------------------------------------------
+
+    def _validate_inputs(self):
+        for row in self.inputs:
+            if not row.item and not row.coffee_batch:
+                frappe.throw(
+                    _("يجب تحديد الصنف أو Coffee Batch في كل سطر.")
+                )
+
+            if flt(row.qty) <= 0:
+                frappe.throw(
+                    _("كمية الاستلام يجب أن تكون أكبر من صفر.")
+                )
+
+            if row.coffee_batch:
+                self._validate_coffee_batch(row)
+
+            elif row.item:
+                self._validate_item(row)
+
+    def _validate_single_item(self):
+        items = set()
+
+        for row in self.inputs:
+            item_code = row.item
+
+            if not item_code and row.coffee_batch:
+                item_code = frappe.db.get_value(
+                    "Coffee Batch",
+                    row.coffee_batch,
+                    "custom_item_code",
+                )
+
+            if item_code:
+                items.add(item_code)
+
+        if len(items) != 1:
+            frappe.throw(
+                _(
+                    "أمر الاستلام يجب أن يحتوي على صنف واحد فقط. "
+                    "لا يمكن خلط البن الخام والبن القاصي في نفس الأمر."
+                )
+            )
+
+        self._receiving_item = next(iter(items))
+
+        if self._receiving_item not in RAW_ITEM_NAMES:
+            frappe.throw(
+                _(
+                    "الصنف {0} غير مسموح في Coffee Receiving Order. "
+                    "الاستلام يبدأ فقط من البن الخام أو البن القاصي."
+                ).format(self._receiving_item)
+            )
+
+    def _validate_item(self, row):
+        if row.item not in RAW_ITEM_NAMES:
+            frappe.throw(
+                _(
+                    "الصنف {0} غير مسموح في الاستلام. "
+                    "المسموح: البن الخام أو البن القاصي."
+                ).format(row.item)
+            )
+
+        item_company = frappe.db.get_value(
+            "Item",
+            row.item,
+            "disabled",
+        )
+
+        if item_company is None:
+            frappe.throw(
+                _("الصنف غير موجود: {0}").format(row.item)
+            )
+
+        disabled = frappe.db.get_value(
+            "Item",
+            row.item,
+            "disabled",
+        )
+
+        if disabled:
+            frappe.throw(
+                _("الصنف {0} معطل.").format(row.item)
+            )
+
+    # ------------------------------------------------------------------
+    # COFFEE BATCH
+    # ------------------------------------------------------------------
+
+    def _validate_coffee_batch(self, row):
+        batch = frappe.get_doc(
+            "Coffee Batch",
+            row.coffee_batch,
+        )
+
+        item_code = batch.custom_item_code
+
+        if not item_code:
+            frappe.throw(
+                _("Coffee Batch {0} لا يحتوي على صنف.").format(
+                    batch.name
+                )
+            )
+
+        if item_code not in RAW_ITEM_NAMES:
+            frappe.throw(
+                _(
+                    "Coffee Batch {0} ليس دفعة بن خام أو بن قاصي."
+                ).format(batch.name)
+            )
+
+        if batch.company and batch.company != self.company:
+            frappe.throw(
+                _(
+                    "الشركة في الدفعة {0} لا تطابق الشركة في أمر الاستلام."
+                ).format(batch.name)
+            )
+
+        if batch.supplier and batch.supplier != self.supplier:
+            frappe.throw(
+                _(
+                    "المورد في الدفعة {0} لا يطابق المورد في أمر الاستلام."
+                ).format(batch.name)
+            )
+
+        if row.item and row.item != item_code:
+            frappe.throw(
+                _(
+                    "الصنف في السطر لا يطابق صنف Coffee Batch {0}."
+                ).format(batch.name)
+            )
+
+        row.item = item_code
+
+        erp_batch = getattr(batch, "erpnext_batch", None)
+
+        if not erp_batch:
+            frappe.throw(
+                _(
+                    "Coffee Batch {0} لا يرتبط بـ ERPNext Batch."
+                ).format(batch.name)
+            )
+
+        if not frappe.db.exists("Batch", erp_batch):
+            frappe.throw(
+                _(
+                    "ERPNext Batch {0} المرتبط بالدفعة غير موجود."
+                ).format(erp_batch)
+            )
+
+    # ------------------------------------------------------------------
+    # SOURCE WAREHOUSE
+    # ------------------------------------------------------------------
+
+    def _validate_source_warehouse(self):
+        configured_source = self._configured_source_warehouse
+
+        if not configured_source:
+            frappe.throw(
+                _("مخزن مصدر الاستلام غير محدد في إعدادات الاستلام.")
+            )
+
+        wh = frappe.db.get_value(
+            "Warehouse",
+            configured_source,
+            ["company", "is_group", "disabled"],
+            as_dict=True,
+        )
+
+        if not wh:
+            frappe.throw(
+                _("مخزن المصدر غير موجود: {0}").format(
+                    configured_source
+                )
+            )
+
+        if wh.disabled:
+            frappe.throw(
+                _("مخزن المصدر معطل: {0}").format(
+                    configured_source
+                )
+            )
+
+        if wh.is_group:
+            frappe.throw(
+                _("لا يمكن استخدام مخزن رئيسي كمصدر للاستلام: {0}").format(
+                    configured_source
+                )
+            )
+
+        if wh.company != self.company:
+            frappe.throw(
+                _("مخزن المصدر {0} لا يتبع الشركة {1}.").format(
+                    configured_source,
+                    self.company,
+                )
+            )
+
+        for row in self.inputs:
+            if row.warehouse and row.warehouse != configured_source:
+                frappe.throw(
+                    _(
+                        "مخزن المصدر في السطر {0} يجب أن يطابق "
+                        "مخزن المصدر المحدد في إعدادات الاستلام."
+                    ).format(row.idx)
+                )
+
+            row.warehouse = configured_source
+
+    # ------------------------------------------------------------------
+    # QUANTITY / SABB AVAILABILITY
+    # ------------------------------------------------------------------
+
+    def _validate_quantities(self):
+        for row in self.inputs:
+            if not row.coffee_batch:
+                frappe.throw(
+                    _("يجب اختيار Coffee Batch لكل سطر استلام.")
+                )
+
+            batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch,
+            )
+
+            erp_batch = getattr(batch, "erpnext_batch", None)
+
+            if not erp_batch:
+                frappe.throw(
+                    _("Coffee Batch {0} لا يحتوي على ERPNext Batch.").format(
+                        batch.name
+                    )
+                )
+
+            available = self._get_available_source_qty(
+                batch.custom_item_code,
+                erp_batch,
+            )
+
+            requested = flt(row.qty)
+
+            if requested > available + 0.0001:
+                frappe.throw(
+                    _(
+                        "الكمية المطلوبة {0} كجم للدفعة {1} "
+                        "أكبر من الكمية المتاحة للاستلام {2} كجم."
+                    ).format(
+                        requested,
+                        batch.name,
+                        available,
+                    )
+                )
+
+            row.rate = (
+                flt(row.rate)
+                or flt(batch.valuation_rate)
+                or 0
+            )
+
+            row.batch_no = erp_batch
+
+    def _get_available_source_qty(self, item, erpnext_batch):
+        """
+        Calculate the current quantity of one ERPNext Batch
+        available in the configured receiving source warehouse.
+
+        ERPNext 15 in this installation uses Serial and Batch Bundle
+        (SABB) as the authoritative batch movement trail.
+
+        Important:
+        We do NOT subtract previous Coffee Receiving Orders separately,
+        because their Material Transfer stock movement is already reflected
+        in SABB.
+        """
+
+        if not item or not erpnext_batch:
+            return 0.0
+
+        source_warehouse = self._configured_source_warehouse
+
+        if not source_warehouse:
+            return 0.0
+
+        batch_item = frappe.db.get_value(
+            "Batch",
+            erpnext_batch,
+            "item",
+        )
+
+        if not batch_item:
+            frappe.throw(
+                _("ERPNext Batch غير موجود: {0}").format(
+                    erpnext_batch
+                )
+            )
+
+        if batch_item != item:
+            frappe.throw(
+                _(
+                    "ERPNext Batch {0} مرتبط بالصنف {1} وليس {2}."
+                ).format(
+                    erpnext_batch,
+                    batch_item,
+                    item,
+                )
+            )
+
+        result = frappe.db.sql(
+            """
+            SELECT
+                COALESCE(SUM(e.qty), 0) AS qty
+            FROM `tabSerial and Batch Entry` e
+            INNER JOIN `tabSerial and Batch Bundle` b
+                ON b.name = e.parent
+            WHERE b.docstatus = 1
+              AND IFNULL(b.is_cancelled, 0) = 0
+              AND IFNULL(b.is_rejected, 0) = 0
+              AND e.batch_no = %s
+              AND e.warehouse = %s
+            """,
+            (
+                erpnext_batch,
+                source_warehouse,
+            ),
+            as_dict=True,
+        )
+
+        return max(
+            flt(result[0].qty if result else 0),
+            0,
+        )
+
+    def _calculate_totals(self):
+        self.input_qty_total = sum(
+            flt(row.qty)
+            for row in self.inputs
+        )
+
+        self.output_qty_total = self.input_qty_total
+        self.loss_qty = 0
+
+        self.yield_percent = (
+            100
+            if self.input_qty_total
+            else 0
+        )
+
+        direct_cost = 0
+
+        for row in self.costs or []:
+            if not flt(row.amount):
+                row.amount = (
+                    flt(row.qty)
+                    * flt(row.rate)
+                )
+
+            direct_cost += flt(row.amount)
+
+        self.direct_cost = direct_cost
+
+        purchase_value = sum(
+            flt(row.qty) * flt(row.rate)
+            for row in self.inputs
+        )
+
+        self.total_cost = (
+            purchase_value
+            + flt(self.overhead_cost)
+            + flt(self.direct_cost)
+        )
+
+        self.cost_per_kg = (
+            self.total_cost / self.input_qty_total
+            if self.input_qty_total
+            else 0
+        )
+
+    # ------------------------------------------------------------------
+    # SUBMIT
+    # ------------------------------------------------------------------
+
+    def before_submit(self):
+        self._validate_quantities()
+        self._create_stock_entry()
+
+    def on_submit(self):
+        self.db_set("status", "Completed")
+
+        if self.stock_entry:
+            self.db_set(
+                "stock_entry",
+                self.stock_entry,
+            )
+
+        self._update_batch_after_submit()
+
+    # ------------------------------------------------------------------
+    # STOCK ENTRY
+    # ------------------------------------------------------------------
+
+    def _create_stock_entry(self):
+        if self.stock_entry:
+            frappe.throw(
+                _("يوجد Stock Entry مرتبط مسبقاً بأمر الاستلام.")
+            )
+
+        source = self._configured_source_warehouse
+        target = self._configured_target_warehouse
+
+        if not source or not target:
+            frappe.throw(
+                _("مخزن المصدر والهدف غير محددين.")
+            )
+
+        se = frappe.new_doc("Stock Entry")
+        se.stock_entry_type = "Material Transfer"
+        se.company = self.company
+        se.posting_date = self.posting_date
+        se.posting_time = frappe.utils.nowtime()
+
+        if self.branch:
+            if hasattr(se, "branch"):
+                se.branch = self.branch
+
+        if hasattr(se, "remarks"):
+            se.remarks = _(
+                "Coffee Receiving Order: {0}"
+            ).format(self.name)
+
+        for row in self.inputs:
+            batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch,
+            )
+
+            erp_batch = batch.erpnext_batch
+
+            if not erp_batch:
+                frappe.throw(
+                    _("لا يوجد ERPNext Batch للدفعة {0}.").format(
+                        batch.name
+                    )
+                )
+
+            se.append(
+                "items",
+                {
+                    "item_code": row.item,
+                    "qty": flt(row.qty),
+                    "uom": frappe.db.get_value(
+                        "Item",
+                        row.item,
+                        "stock_uom",
+                    ),
+                    "stock_uom": frappe.db.get_value(
+                        "Item",
+                        row.item,
+                        "stock_uom",
+                    ),
+                    "conversion_factor": 1,
+                    "s_warehouse": source,
+                    "t_warehouse": target,
+                    "batch_no": erp_batch,
+                    "basic_rate": flt(row.rate),
+                    "set_basic_rate_manually": 1,
+                },
+            )
+
+        if not se.items:
+            frappe.throw(
+                _("لا توجد بنود لإنشاء Stock Entry.")
+            )
+
+        se.insert(ignore_permissions=True)
+        se.submit()
+
+        self.db_set(
+            "stock_entry",
+            se.name,
+        )
+
+    # ------------------------------------------------------------------
+    # BATCH STATE
+    # ------------------------------------------------------------------
+
+    def _update_batch_after_submit(self):
+        for row in self.inputs:
+            batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch,
+            )
+
+            batch.current_warehouse = (
+                self._configured_target_warehouse
+            )
+
+            if hasattr(batch, "status"):
+                batch.status = "Ready for Processing"
+
+            batch.save(ignore_permissions=True)
+
+    # ------------------------------------------------------------------
+    # CANCEL
+    # ------------------------------------------------------------------
+
+    def before_cancel(self):
+        if self.stock_entry:
+            se = frappe.get_doc(
+                "Stock Entry",
+                self.stock_entry,
+            )
+
+            if se.docstatus == 1:
+                se.cancel()
+
+    def on_cancel(self):
+        self.db_set(
+            "status",
+            "Cancelled",
+        )
+
+        for row in self.inputs:
+            if not row.coffee_batch:
+                continue
+
+            batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch,
+            )
+
+            remaining_source = self._get_available_source_qty(
+                batch,
+                self.name,
+            )
+
+            if remaining_source > 0:
+                batch.current_warehouse = (
+                    self._configured_source_warehouse
+                )
+                batch.status = "Received"
+                batch.save(ignore_permissions=True)
+
+    # ------------------------------------------------------------------
+    # MANUAL API
+    # ------------------------------------------------------------------
+
+    @frappe.whitelist()
+    def create_batches(self):
+        """
+        Kept for backward compatibility.
+        Receiving no longer creates duplicate Coffee Batches.
+        It only validates that every input is linked to a valid batch.
+        """
+
+        if self.docstatus != 0:
+            frappe.throw(
+                _(
+                    "يمكن تنفيذ هذه العملية للمستند غير المرسل فقط."
+                )
+            )
+
+        self.validate()
+
+        return {
+            "name": self.name,
+            "batches": [
+                row.coffee_batch
+                for row in self.inputs
+                if row.coffee_batch
+            ],
+        }
+
+
+# ----------------------------------------------------------------------
+# Frappe hooks compatibility
+# ----------------------------------------------------------------------
+
+def validate(doc, method=None):
+    doc.validate()
+
+
+def before_submit(doc, method=None):
+    doc.before_submit()
+
+
+def on_submit(doc, method=None):
+    doc.on_submit()
+
+
+def before_cancel(doc, method=None):
+    doc.before_cancel()
+
+
+def on_cancel(doc, method=None):
+    doc.on_cancel()

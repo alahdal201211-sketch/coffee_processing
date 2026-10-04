@@ -1,0 +1,31 @@
+# 1. الانتقال إلى frappe-bench
+cd ~/frappe-bench
+
+# 2. إنشاء التطبيق
+bench new-app coffee_processing
+
+# 3. حفظ سكريبت الهيكل وتشغيله
+nano create_structure.sh
+chmod +x create_structure.sh
+./create_structure.sh
+
+# 4. نسخ جميع الملفات (JSON + Python + JS + Services + Validations + API + Reports)
+
+# 5. تثبيت التطبيق
+bench --site your-site.local install-app coffee_processing
+
+# 6. ترحيل قاعدة البيانات
+bench --site your-site.local migrate
+
+# 7. تحميل الأدوار
+bench --site your-site.local execute coffee_processing.patches.v1_0.create_roles
+
+# 8. بناء الأصول
+bench build --app coffee_processing
+
+# 9. إعادة التشغيل
+bench restart
+
+# 10. اختبار
+bench --site your-site.local execute coffee_processing.tasks.daily
+bench --site your-site.local execute coffee_processing.coffee_processing.api.coffee_api.get_grade_stock_summary

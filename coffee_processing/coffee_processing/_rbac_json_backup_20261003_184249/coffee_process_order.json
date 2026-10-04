@@ -1,0 +1,509 @@
+{
+ "actions": [],
+ "autoname": "CPO-.YYYY.-.#####",
+ "creation": "2026-09-13 01:11:36.613601",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_basic",
+  "company",
+  "branch",
+  "posting_date",
+  "status",
+  "route",
+  "operation",
+  "column_break_basic",
+  "source_warehouse",
+  "target_warehouse",
+  "cost_center",
+  "assigned_to",
+  "required_role",
+  "section_measurements",
+  "weight_before",
+  "weight_after",
+  "moisture_before",
+  "moisture_after",
+  "column_break_measurements",
+  "quality_result",
+  "sample_reference",
+  "approval_status",
+  "daily_monitoring_notes",
+  "section_inputs",
+  "inputs",
+  "section_outputs",
+  "outputs",
+  "section_variance",
+  "input_qty_total",
+  "output_qty_total",
+  "loss_qty",
+  "variance_qty",
+  "variance_percent",
+  "variance_status",
+  "column_break_variance",
+  "operation_variance_threshold",
+  "negative_variance",
+  "positive_variance",
+  "section_costing",
+  "input_cost_total",
+  "process_cost_total",
+  "overhead_cost_total",
+  "byproduct_credit_total",
+  "output_cost_total",
+  "additional_costs",
+  "section_notes",
+  "remarks",
+  "section_accounts",
+  "wip_account",
+  "overhead_account",
+  "variance_treatment_method",
+  "variance_additional_qty",
+  "variance_additional_cost",
+  "variance_treatment_status",
+  "stock_entry_status",
+  "stock_entry",
+  "amended_from",
+  "route_step_sequence",
+  "operation_code",
+  "operation_name_ar",
+  "cost_allocation_method"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "بيانات أمر العملية"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "تاريخ العملية",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "الحالة",
+   "options": "Draft\nReady\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "مسار المعالجة",
+   "options": "Coffee Process Route",
+   "reqd": 1
+  },
+  {
+   "fieldname": "route_step_sequence",
+   "fieldtype": "Int",
+   "label": "تسلسل خطوة المسار",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "operation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "العملية",
+   "options": "Coffee Operation Master",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "operation.operation_code",
+   "fieldname": "operation_code",
+   "fieldtype": "Data",
+   "label": "كود العملية",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fetch_from": "operation.operation_name_ar",
+   "fieldname": "operation_name_ar",
+   "fieldtype": "Data",
+   "label": "اسم العملية",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "مستودع المصدر",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "مستودع الناتج",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "مركز التكلفة",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "cost_allocation_method",
+   "fieldtype": "Select",
+   "label": "طريقة توزيع التكلفة",
+   "options": "Quantity Based\nRelative Sales Value\nBy-Product Credit\nHybrid\nManual",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "المسؤول عن التنفيذ",
+   "options": "User"
+  },
+  {
+   "fieldname": "required_role",
+   "fieldtype": "Link",
+   "label": "الدور المطلوب",
+   "options": "Role"
+  },
+  {
+   "fieldname": "section_measurements",
+   "fieldtype": "Section Break",
+   "label": "القياسات والجودة"
+  },
+  {
+   "fieldname": "weight_before",
+   "fieldtype": "Float",
+   "label": "الوزن قبل العملية",
+   "precision": "3"
+  },
+  {
+   "fieldname": "weight_after",
+   "fieldtype": "Float",
+   "label": "الوزن بعد العملية",
+   "precision": "3"
+  },
+  {
+   "fieldname": "moisture_before",
+   "fieldtype": "Float",
+   "label": "الرطوبة قبل العملية %",
+   "precision": "3"
+  },
+  {
+   "fieldname": "moisture_after",
+   "fieldtype": "Float",
+   "label": "الرطوبة بعد العملية %",
+   "precision": "3"
+  },
+  {
+   "fieldname": "column_break_measurements",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quality_result",
+   "fieldtype": "Select",
+   "label": "نتيجة الجودة",
+   "options": "Pending\nApproved\nRejected"
+  },
+  {
+   "fieldname": "sample_reference",
+   "fieldtype": "Data",
+   "label": "مرجع العينة"
+  },
+  {
+   "default": "Not Required",
+   "fieldname": "approval_status",
+   "fieldtype": "Select",
+   "label": "حالة الاعتماد",
+   "options": "Not Required\nPending\nApproved\nRejected"
+  },
+  {
+   "fieldname": "daily_monitoring_notes",
+   "fieldtype": "Long Text",
+   "label": "ملاحظات المتابعة اليومية"
+  },
+  {
+   "fieldname": "section_inputs",
+   "fieldtype": "Section Break",
+   "label": "مدخلات العملية"
+  },
+  {
+   "fieldname": "inputs",
+   "fieldtype": "Table",
+   "label": "مدخلات",
+   "options": "Coffee Process Order Input",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_outputs",
+   "fieldtype": "Section Break",
+   "label": "مخرجات العملية"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "المخرجات الفعلية",
+   "options": "Coffee Process Order Output",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_variance",
+   "fieldtype": "Section Break",
+   "label": "الكميات والفروقات"
+  },
+  {
+   "fieldname": "input_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المدخلات",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_qty_total",
+   "fieldtype": "Float",
+   "label": "إجمالي المخرجات",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loss_qty",
+   "fieldtype": "Float",
+   "label": "الفاقد",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_qty",
+   "fieldtype": "Float",
+   "label": "فرق الكمية",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_percent",
+   "fieldtype": "Float",
+   "label": "نسبة الفرق %",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "default": "Within Threshold",
+   "fieldname": "variance_status",
+   "fieldtype": "Select",
+   "label": "حالة الفرق",
+   "options": "Within Threshold\nRequires Approval\nApproved\nRejected",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_variance",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "operation_variance_threshold",
+   "fieldtype": "Float",
+   "label": "حد الفرق المسموح %",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "negative_variance",
+   "fieldtype": "Check",
+   "label": "فرق سالب",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "positive_variance",
+   "fieldtype": "Check",
+   "label": "فرق موجب",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_costing",
+   "fieldtype": "Section Break",
+   "label": "التكلفة"
+  },
+  {
+   "fieldname": "input_cost_total",
+   "fieldtype": "Currency",
+   "label": "تكلفة المدخلات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "process_cost_total",
+   "fieldtype": "Currency",
+   "label": "تكلفة المعالجة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overhead_cost_total",
+   "fieldtype": "Currency",
+   "label": "التكاليف غير المباشرة",
+   "read_only": 1
+  },
+  {
+   "fieldname": "byproduct_credit_total",
+   "fieldtype": "Currency",
+   "label": "ائتمان المنتجات الثانوية",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_cost_total",
+   "fieldtype": "Currency",
+   "label": "إجمالي تكلفة المخرجات",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_accounts",
+   "fieldtype": "Section Break",
+   "label": "الحسابات"
+  },
+  {
+   "fieldname": "wip_account",
+   "fieldtype": "Link",
+   "label": "حساب الأعمال تحت المعالجة",
+   "options": "Account",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "overhead_account",
+   "fieldtype": "Link",
+   "label": "حساب التكاليف غير المباشرة",
+   "options": "Account",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "section_notes",
+   "fieldtype": "Section Break",
+   "label": "ملاحظات العملية"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Long Text",
+   "label": "ملاحظات"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Coffee Process Order",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1,
+   "hidden": 1
+  },
+  {
+   "default": "Not Created",
+   "fieldname": "stock_entry_status",
+   "fieldtype": "Select",
+   "label": "حالة حركة المخزون",
+   "options": "Not Created\nCreated\nSubmitted\nCancelled\nFailed",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "حركة المخزون",
+   "options": "Stock Entry",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "additional_costs",
+   "fieldtype": "Table",
+   "label": "التكاليف التشغيلية",
+   "options": "Coffee Process Order Cost"
+  },
+  {
+   "description": "طريقة معالجة فرق الكمية الموروثة من العملية.",
+   "fetch_from": "operation.variance_treatment_method",
+   "fieldname": "variance_treatment_method",
+   "fieldtype": "Select",
+   "label": "طريقة معالجة فرق الكمية",
+   "options": "توزيع التكلفة على الكمية الفعلية\nاعتبار الزيادة مدخلًا إضافيًا\nإضافة تكلفة للفرق يدويًا\nتسجيل الفرق كفرق إنتاج\nطلب موافقة\nرفض الفرق",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "description": "الكمية التي تمت معالجتها وفق سياسة فرق الكمية.",
+   "fieldname": "variance_additional_qty",
+   "fieldtype": "Float",
+   "label": "كمية الفرق المعالجة",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "description": "التكلفة الإضافية المرتبطة بفرق الكمية عند اختيار المعالجة اليدوية.",
+   "fieldname": "variance_additional_cost",
+   "fieldtype": "Currency",
+   "label": "التكلفة الإضافية للفرق",
+   "hidden": 1
+  },
+  {
+   "default": "غير مطلوب",
+   "description": "حالة معالجة فرق الكمية.",
+   "fieldname": "variance_treatment_status",
+   "fieldtype": "Select",
+   "label": "حالة معالجة الفرق",
+   "options": "غير مطلوب\nمطلوب معالجة\nتمت المعالجة\nبانتظار الموافقة\nمرفوض",
+   "read_only": 1,
+   "hidden": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-18 23:16:01.514922",
+ "modified_by": "Administrator",
+ "module": "Coffee Processing",
+ "name": "Coffee Process Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

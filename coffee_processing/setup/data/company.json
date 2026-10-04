@@ -1,0 +1,32 @@
+[
+  {
+    "name": "الاهدل للبن",
+    "company_name": "الاهدل للبن",
+    "abbr": "ALC",
+    "default_currency": "YER",
+    "country": "Yemen",
+    "is_group": 0,
+    "default_cash_account": "نقدي - ALC",
+    "default_receivable_account": "مدينون - ALC",
+    "default_payable_account": "الدائنين - ALC",
+    "write_off_account": "لا تصلح - ALC",
+    "default_expense_account": "تكلفة البضاعة المباعة - ALC",
+    "default_income_account": "المبيعات - ALC",
+    "cost_center": "رئيسي - ALC",
+    "exchange_gain_loss_account": "أرباح / خسائر الناتجة عن صرف العملة - ALC",
+    "round_off_account": "تقريب - ALC",
+    "round_off_cost_center": "رئيسي - ALC",
+    "accumulated_depreciation_account": "إستهلاك متراكم - ALC",
+    "depreciation_expense_account": "إهلاك - ALC",
+    "expenses_included_in_asset_valuation": "النفقات المدرجة في تقييم الأصول - ALC",
+    "disposal_account": "الربح / الخسارة عند التخلص من الأصول - ALC",
+    "depreciation_cost_center": "رئيسي - ALC",
+    "capital_work_in_progress_account": "حساب CWIP - ALC",
+    "asset_received_but_not_billed": "أصل مستلم ولكن غير فاتورة - ALC",
+    "stock_received_but_not_billed": "المخزون المتلقي ولكن غير مفوتر - ALC",
+    "expenses_included_in_valuation": "المصروفات متضمنة في تقييم السعر - ALC",
+    "enable_perpetual_inventory": 1,
+    "default_inventory_account": "مخزون البن تحت المعالجة - ALC",
+    "stock_adjustment_account": "تسوية المخزون - ALC"
+  }
+]

@@ -1,0 +1,146 @@
+{
+ "name": "Coffee Production Plan",
+ "doctype": "DocType",
+ "module": "Coffee Processing",
+ "autoname": "PLAN-.YYYY.-.#####",
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "track_changes": 1,
+ "field_order": [
+  "plan_name",
+  "trial",
+  "company",
+  "branch",
+  "reference_batch",
+  "planned_qty",
+  "scale_factor",
+  "status",
+  "steps",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "plan_name",
+   "fieldtype": "Data",
+   "label": "اسم خطة الإنتاج",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "trial",
+   "fieldtype": "Link",
+   "label": "التجربة المعتمدة",
+   "options": "Coffee Process Trial",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "الشركة",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "الفرع",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "reference_batch",
+   "fieldtype": "Link",
+   "label": "دفعة المرجع",
+   "options": "Coffee Batch"
+  },
+  {
+   "fieldname": "planned_qty",
+   "fieldtype": "Float",
+   "label": "الكمية المخططة (كجم)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "scale_factor",
+   "fieldtype": "Float",
+   "label": "معامل التوسعة",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "الحالة",
+   "options": "Draft\nReady\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "steps",
+   "fieldtype": "Table",
+   "label": "خطوات خطة الإنتاج",
+   "options": "Coffee Production Plan Step",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "ملاحظات"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Processing Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Coffee Company Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "delete": 0,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Coffee Financial Controller",
+   "permlevel": 0,
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "submit": 0,
+   "cancel": 0,
+   "delete": 0,
+   "print": 1,
+   "email": 0,
+   "report": 1,
+   "export": 1
+  }
+ ]
+}

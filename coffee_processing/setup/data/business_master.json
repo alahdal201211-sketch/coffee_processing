@@ -1,0 +1,62 @@
+{
+  "currencies": [
+    "YER",
+    "SAR",
+    "USD"
+  ],
+  "supplier_regions": [
+    [
+      "Yemen",
+      "الحديده",
+      "برع"
+    ],
+    [
+      "Yemen",
+      "الحديده",
+      "جبل راس"
+    ],
+    [
+      "Yemen",
+      "صنعاء",
+      "بن الحارث"
+    ],
+    [
+      "Yemen",
+      "صنعاء",
+      "حراز"
+    ],
+    [
+      "Yemen",
+      "إب",
+      "النادرة"
+    ],
+    [
+      "Yemen",
+      "حجه",
+      "كشر"
+    ]
+  ],
+  "processing_types": [
+    {
+      "code": "REAL",
+      "name_ar": "حقيقة",
+      "description": "عملية فعلية على مخزون الشركة."
+    },
+    {
+      "code": "TRIAL",
+      "name_ar": "تجارب",
+      "description": "عملية تجريبية للتحقق قبل اعتماد بيانات المعالجة الحقيقية."
+    }
+  ],
+  "processing_operations": [
+    "BATCH",
+    "SORTING",
+    "FERMENTATION",
+    "DRYING",
+    "HULLING",
+    "GRADING",
+    "CUPPING",
+    "PACKAGING",
+    "BLENDING"
+  ]
+}
