@@ -56,6 +56,18 @@
       "options": "Input\nOutput\nReject\nBy-Product"
     },
     {
+      "fieldname": "coffee_type",
+      "fieldtype": "Select",
+      "label": "نوع البن",
+      "options": "Specialty\nCommercial\nDefects\nBy-Product\nMixed"
+    },
+    {
+      "fieldname": "coffee_grade",
+      "fieldtype": "Link",
+      "label": "درجة البن",
+      "options": "Coffee Grade Master"
+    },
+    {
       "fieldname": "notes",
       "fieldtype": "Small Text",
       "label": "ملاحظات"

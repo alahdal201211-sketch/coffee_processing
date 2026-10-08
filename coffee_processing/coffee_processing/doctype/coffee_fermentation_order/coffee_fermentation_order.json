@@ -20,6 +20,22 @@
    "reqd": 1
   },
   {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "مخزن المصدر",
+   "options": "Warehouse",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "مخزن الهدف",
+   "options": "Warehouse",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
    "fieldname": "storage_unit",
    "fieldtype": "Link",
    "label": "وحدة التخمير",
@@ -143,6 +159,12 @@
    "options": "Coffee Operation Batch"
   },
   {
+   "fieldname": "resource_allocations",
+   "fieldtype": "Table",
+   "label": "تخصيص البراميل",
+   "options": "Coffee Storage Allocation"
+  },
+  {
    "fieldname": "input_qty_total",
    "fieldtype": "Float",
    "label": "إجمالي المدخلات",
@@ -170,6 +192,13 @@
    "fieldname": "section_cost",
    "fieldtype": "Section Break",
    "label": "التكاليف"
+  },
+  {
+   "fieldname": "cost_allocation_method",
+   "fieldtype": "Select",
+   "label": "طريقة توزيع التكلفة",
+   "options": "Same Input Cost\nQuantity Based\nRelative Sales Value\nBy-Product Credit\nHybrid\nManual",
+   "default": "Same Input Cost"
   },
   {
    "fieldname": "costs",

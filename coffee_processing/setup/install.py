@@ -1525,197 +1525,217 @@ def ensure_coffee_dashboard():
         
         
 def ensure_coffee_resources():
+    """Converge physical processing resources to the packaged active count.
 
-    resources = [
+    Historical resources beyond the approved count are never deleted.
+    They are deactivated only when both the physical resource and its
+    corresponding storage unit are unoccupied.
+    """
+    data = load_data("resources.json")
+    company = data.get("company", "الاهدل للبن")
+    branch = data.get("branch", "الرئيسي - الاهدل للبن")
 
-        {
-            "doctype": "Coffee Fermentation Barrel",
-            "code": "BARREL-001",
-            "capacity_kg": 200,
-            "warehouse": "CFW - مخزن التخمير - الاهدل للبن - بن1"
-        },
-
-        {
-            "doctype": "Coffee Drying Bed",
-            "code": "BED-001",
-            "capacity_kg": 50,
-            "warehouse": "CDW - مخزن التجفيف - الاهدل للبن - بن1"
-        },
-
-    ]
-
-
-    for r in resources:
-
-        # Determine unique key field per DocType
-        if r["doctype"] == "Coffee Storage Unit":
-            key_field = "unit_code"
-        else:
-            key_field = "code"
-
-
-        if frappe.db.exists(
-            r["doctype"],
-            {key_field: r[key_field]}
-        ):
+    for key, spec in data.items():
+        if key in {"company", "branch"}:
             continue
 
+        target_count = int(spec["count"])
 
-        doc = frappe.get_doc(r)
+        for i in range(1, target_count + 1):
+            code = f"{spec['prefix']}-{i:03d}"
 
-        doc.insert(
-            ignore_permissions=True
-        )
+            values = {
+                "doctype": spec["doctype"],
+                "code": code,
+                "capacity_kg": spec["capacity_kg"],
+                "warehouse": spec["warehouse"],
+                "location": code,
+                "company": company,
+                "branch": branch,
+                "status": spec["status"],
+                "active": 1,
+            }
 
+            if spec.get("bed_type"):
+                values["bed_type"] = spec["bed_type"]
 
+            name = frappe.db.exists(spec["doctype"], {"code": code})
 
+            if name:
+                doc = frappe.get_doc(spec["doctype"], name)
+                changed = False
 
-def update_coffee_resource_warehouses():
+                for fieldname, value in values.items():
+                    if fieldname == "doctype":
+                        continue
+                    if getattr(doc, fieldname, None) != value:
+                        setattr(doc, fieldname, value)
+                        changed = True
 
-    updates = [
-        (
-            "Coffee Fermentation Barrel",
-            "BARREL-001",
-            "CFW - مخزن التخمير - الاهدل للبن - بن1"
-        ),
-        (
-            "Coffee Drying Bed",
-            "BED-001",
-            "CDW - مخزن التجفيف - الاهدل للبن - بن1"
-        )
-    ]
+                if changed:
+                    doc.save(ignore_permissions=True)
+            else:
+                frappe.get_doc(values).insert(ignore_permissions=True)
 
-
-    for doctype, code, warehouse in updates:
-
-        name = frappe.db.get_value(
-            doctype,
-            {"code": code},
-            "name"
-        )
-
-        if name:
-            frappe.db.set_value(
-                doctype,
-                name,
-                "warehouse",
-                warehouse
+            unit = frappe.db.get_value(
+                "Coffee Storage Unit",
+                {"unit_code": code},
+                "name",
             )
 
-
-
-def ensure_coffee_reports():
-    """
-    Ensure all standard Coffee Processing Query Reports are correctly
-    configured after fixtures are loaded.
-
-    This is intentionally idempotent and safe to run on every migrate.
-    """
-
-    reports = [
-        "Grade-wise Stock Report",
-        "Grade-wise Sales Report",
-        "Grade-wise Cost Report",
-        "Grade-wise Profitability Report",
-        "Grade Yield Report",
-    ]
-
-    letter_head = "ALC Coffee Letter Head"
-
-    # ------------------------------------------------------------------
-    # 1. Required Letter Head must exist
-    # ------------------------------------------------------------------
-    if not frappe.db.exists("Letter Head", letter_head):
-        frappe.throw(
-            _("Required Letter Head {0} does not exist.").format(
-                letter_head
-            )
-        )
-
-    # ------------------------------------------------------------------
-    # 2. Ensure every required report exists and has the correct settings
-    # ------------------------------------------------------------------
-    for name in reports:
-
-        # Reports are supplied by fixtures.
-        if not frappe.db.exists("Report", name):
-            frappe.throw(
-                _(
-                    "Required Coffee Processing Report {0} does not exist."
-                ).format(name)
-            )
-
-        doc = frappe.get_doc("Report", name)
-
-        changed = False
-
-        # Report Type
-        if doc.report_type != "Query Report":
-            doc.report_type = "Query Report"
-            changed = True
-
-        # Reference DocType
-        if doc.ref_doctype != "Coffee Batch":
-            doc.ref_doctype = "Coffee Batch"
-            changed = True
-
-        # Module
-        if doc.module != "Coffee Processing":
-            doc.module = "Coffee Processing"
-            changed = True
-
-        # Letter Head
-        if doc.letter_head != letter_head:
-            doc.letter_head = letter_head
-            changed = True
-
-        # Save normal document changes first.
-        if changed:
-            doc.save(ignore_permissions=True)
-
-        # ------------------------------------------------------------------
-        # 3. Explicitly enforce Letter Head
-        #
-        # Frappe standard Query Reports can normalize some fields during
-        # document validation. Therefore, enforce the packaged Letter Head
-        # directly after save.
-        # ------------------------------------------------------------------
-        frappe.db.set_value(
-            "Report",
-            name,
-            "letter_head",
-            letter_head,
-            update_modified=False,
-        )
-
-    # ------------------------------------------------------------------
-    # 4. Commit the report configuration
-    # ------------------------------------------------------------------
-    frappe.db.commit()
-
-    # ------------------------------------------------------------------
-    # 5. Immediate verification
-    # ------------------------------------------------------------------
-    for name in reports:
-        actual_letter_head = frappe.db.get_value(
-            "Report",
-            name,
-            "letter_head",
-        )
-
-        if actual_letter_head != letter_head:
-            frappe.throw(
-                _(
-                    "Report {0} does not have the required Letter Head "
-                    "{1}. Current value: {2}"
-                ).format(
-                    name,
-                    letter_head,
-                    actual_letter_head or "NULL",
+            if unit:
+                current_qty = frappe.db.get_value(
+                    "Coffee Storage Unit",
+                    unit,
+                    "current_qty",
                 )
+
+                unit_values = {
+                    "storage_type": spec["storage_type"],
+                    "capacity_kg": spec["capacity_kg"],
+                    "warehouse": spec["warehouse"],
+                    "location": code,
+                    "company": company,
+                    "branch": branch,
+                    "status": "Available",
+                    "active": 1,
+                }
+
+                # Never overwrite an existing quantity during convergence.
+                # Quantity belongs to the operational stock/resource state.
+                if current_qty is None:
+                    unit_values["current_qty"] = 0
+
+                frappe.db.set_value(
+                    "Coffee Storage Unit",
+                    unit,
+                    unit_values,
+                    update_modified=False,
+                )
+            else:
+                frappe.get_doc(
+                    {
+                        "doctype": "Coffee Storage Unit",
+                        "unit_code": code,
+                        "storage_type": spec["storage_type"],
+                        "capacity_kg": spec["capacity_kg"],
+                        "warehouse": spec["warehouse"],
+                        "location": code,
+                        "company": company,
+                        "branch": branch,
+                        "status": "Available",
+                        "active": 1,
+                        "current_qty": 0,
+                    }
+                ).insert(ignore_permissions=True)
+
+        # Keep historical resources but deactivate resources above the
+        # approved count. Never deactivate an occupied resource.
+        extra_names = frappe.get_all(
+            spec["doctype"],
+            filters={"code": ["like", f"{spec['prefix']}-%"]},
+            pluck="name",
+        )
+
+        for resource_name in extra_names:
+            code = frappe.db.get_value(
+                spec["doctype"],
+                resource_name,
+                "code",
             )
 
+            if not code:
+                continue
 
+            try:
+                number = int(code.rsplit("-", 1)[1])
+            except (TypeError, ValueError):
+                continue
+
+            if number <= target_count:
+                continue
+
+            resource_qty = frappe.db.get_value(
+                spec["doctype"],
+                resource_name,
+                "current_qty",
+            )
+
+            unit = frappe.db.get_value(
+                "Coffee Storage Unit",
+                {"unit_code": code},
+                "name",
+            )
+
+            unit_qty = None
+            if unit:
+                unit_qty = frappe.db.get_value(
+                    "Coffee Storage Unit",
+                    unit,
+                    "current_qty",
+                )
+
+            occupied = max(
+                float(resource_qty or 0),
+                float(unit_qty or 0),
+            )
+
+            if occupied > 0:
+                frappe.throw(
+                    _(
+                        "لا يمكن تعطيل المورد {0} لأنه يحتوي كمية مشغولة {1} كجم."
+                    ).format(code, occupied)
+                )
+
+            frappe.db.set_value(
+                spec["doctype"],
+                resource_name,
+                {
+                    "active": 0,
+                    "status": "غير فعال",
+                },
+                update_modified=False,
+            )
+
+            if unit:
+                # Do not alter current_qty while deactivating.
+                frappe.db.set_value(
+                    "Coffee Storage Unit",
+                    unit,
+                    {
+                        "active": 0,
+                        "status": "Inactive",
+                    },
+                    update_modified=False,
+                )
+
+def ensure_process_rules():
+    """Converge critical operation/route rules after fixture sync."""
+    rules = {
+        "SORTING": {"allow_multiple_inputs": 1, "requires_quality": 0, "cost_allocation_method": "Same Input Cost"},
+        "FERMENTATION": {"allow_multiple_outputs": 1},
+        "DRYING": {"allow_multiple_outputs": 1},
+    }
+    for name, values in rules.items():
+        if not frappe.db.exists("Coffee Operation Master", name):
+            continue
+        frappe.db.set_value("Coffee Operation Master", name, values, update_modified=False)
+
+    for route_name in frappe.get_all("Coffee Process Route", pluck="name"):
+        route = frappe.get_doc("Coffee Process Route", route_name)
+        for step in route.steps:
+            if step.operation == "SORTING":
+                step.allow_multiple_inputs = 1
+                step.requires_quality = 0
+            elif step.operation == "FERMENTATION":
+                step.minimum_days = 1
+                step.maximum_days = 5
+                step.allow_multiple_outputs = 1
+            elif step.operation == "DRYING":
+                step.minimum_days = 25
+                step.maximum_days = 30
+                step.allow_multiple_outputs = 1
+        route.save(ignore_permissions=True)
 
 def install_master_data():
 
@@ -1743,9 +1763,8 @@ def install_master_data():
         ensure_bank_and_wallet_accounts()
         update_company_defaults()
         ensure_process_cost_links()
+        ensure_process_rules()
         ensure_coffee_resources()
-        update_coffee_resource_warehouses()
-        ensure_coffee_reports()
         remove_legacy_coffee_number_cards()
         ensure_coffee_dashboard()
 

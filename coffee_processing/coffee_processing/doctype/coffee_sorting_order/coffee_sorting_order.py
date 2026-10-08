@@ -35,6 +35,7 @@ class CoffeeSortingOrder(Document):
         self._calculate_totals()
         self._validate_quantities()
         self._calculate_costs()
+        self._validate_manual_costs()
 
     # ------------------------------------------------------------------
     # Header / Master Data
@@ -147,6 +148,38 @@ class CoffeeSortingOrder(Document):
                 ).format(route.name, self.branch)
             )
 
+        # جميع مدخلات الفرز يجب أن تتبع نفس مسار المعالجة.
+        # Sorting يسمح بأكثر من مدخل، لذلك لا يكفي فحص الدفعة الأولى فقط.
+        for row in self.inputs:
+            if not row.coffee_batch:
+                frappe.throw(
+                    _("يجب تحديد Coffee Batch لكل مدخل.")
+                )
+
+            input_batch = frappe.get_doc(
+                "Coffee Batch",
+                row.coffee_batch,
+            )
+
+            if not input_batch.route:
+                frappe.throw(
+                    _(
+                        "الدفعة {0} لا تحتوي على مسار معالجة."
+                    ).format(input_batch.name)
+                )
+
+            if input_batch.route != route.name:
+                frappe.throw(
+                    _(
+                        "لا يمكن دمج الدفعة {0} مع بقية المدخلات لأن مسارها "
+                        "{1} يختلف عن مسار الدفعة الأولى {2}."
+                    ).format(
+                        input_batch.name,
+                        input_batch.route,
+                        route.name
+                    )
+                )
+
         sorting_steps = [
             step
             for step in route.steps
@@ -180,7 +213,10 @@ class CoffeeSortingOrder(Document):
 
         # لا يوجد route field في Sorting Order JSON، لذلك نخزن
         # المسار في Process Order فقط عند إنشائه.
-        self._next_route_step = self._get_next_route_step(route, sorting_step)
+        self._next_route_step = self._get_next_route_step(
+            route,
+            sorting_step,
+        )
 
     def _get_next_route_step(self, route, current_step):
         steps = sorted(
@@ -350,18 +386,6 @@ class CoffeeSortingOrder(Document):
                     _("يجب تحديد مستودع المخرج.")
                 )
 
-            # يجب أن يكون item هو ERPNext Item الحقيقي،
-            # وليس custom_item_code الخاص بـ Coffee Batch.
-            if self._input_batch and self._input_batch.erpnext_batch:
-                real_item = frappe.db.get_value(
-                    "Batch",
-                    self._input_batch.erpnext_batch,
-                    "item",
-                )
-
-                if real_item:
-                    row.item = real_item
-
             if not row.item:
                 frappe.throw(
                     _("تعذر تحديد صنف ERPNext الحقيقي لمخرج الفرز.")
@@ -378,8 +402,7 @@ class CoffeeSortingOrder(Document):
                     or "منتج ثانوي ناتج من الفرز"
                 )
 
-            # لا نستخدم rate يدوياً من Sorting Order كمصدر تكلفة.
-            # المحرك المركزي سيقوم بتوزيع التكلفة.
+            # Preserve the user-entered rate/amount for Manual costing.
             row.rate = flt(row.rate or 0)
             row.amount = flt(row.qty) * flt(row.rate)
 
@@ -422,17 +445,6 @@ class CoffeeSortingOrder(Document):
         if self.output_qty_total <= 0:
             frappe.throw(
                 _("إجمالي كمية المخرجات يجب أن يكون أكبر من صفر.")
-            )
-
-        if self.output_qty_total > self.input_qty_total:
-            frappe.throw(
-                _(
-                    "إجمالي المخرجات {0} أكبر من إجمالي المدخلات {1}. "
-                    "لا يسمح الفرز الحالي بفرق سالب."
-                ).format(
-                    flt(self.output_qty_total),
-                    flt(self.input_qty_total),
-                )
             )
 
         allow_loss = getattr(
@@ -509,6 +521,18 @@ class CoffeeSortingOrder(Document):
                     None,
                 )
             )
+
+    def _validate_manual_costs(self):
+        method = getattr(self, "cost_allocation_method", None)
+        if method != "Manual":
+            return
+        for row in (self.outputs or []):
+            if row.role == "By-Product":
+                continue
+            if flt(row.qty) > 0 and flt(row.rate) <= 0:
+                frappe.throw(
+                    _("يجب إدخال تكلفة يدوية أكبر من صفر للمخرج {0}.").format(row.item)
+                )
 
     # ------------------------------------------------------------------
     # Process Order Creation
@@ -595,12 +619,9 @@ class CoffeeSortingOrder(Document):
         cpo.daily_monitoring_notes = self.remarks
 
         cpo.cost_allocation_method = (
-            getattr(
-                self._sorting_operation,
-                "cost_allocation_method",
-                None,
-            )
-            or "Relative Sales Value"
+            getattr(self, "cost_allocation_method", None)
+            or getattr(self._sorting_operation, "cost_allocation_method", None)
+            or "Same Input Cost"
         )
 
         cpo.variance_treatment_method = getattr(
@@ -663,8 +684,8 @@ class CoffeeSortingOrder(Document):
             child.conversion_factor = 1
 
             if row.role == "Reject":
-                child.output_type = "Waste"
-                child.is_saleable = 0
+                child.output_type = "Main Product"
+                child.is_saleable = 1
             elif row.role == "By-Product":
                 child.output_type = "By-Product"
                 child.is_saleable = 0
@@ -674,6 +695,24 @@ class CoffeeSortingOrder(Document):
 
             child.quality_status = "Pending"
             child.notes = row.notes
+            child.valuation_rate = flt(row.rate)
+            child.amount = flt(row.amount)
+
+        # --------------------------------------------------------------
+        # Sorting Costs -> Coffee Process Order
+        # --------------------------------------------------------------
+        # Sorting Order is the source of the operational costs entered
+        # during sorting. CPO is the central processing-cost record.
+        cpo.process_cost_total = flt(self.direct_cost)
+        cpo.overhead_cost_total = flt(self.overhead_cost)
+
+        # Preserve the detailed operational cost lines.
+        for cost_row in (self.costs or []):
+            cost_child = cpo.append("additional_costs", {})
+
+            cost_child.expense_account = cost_row.account
+            cost_child.description = cost_row.description
+            cost_child.amount = flt(cost_row.amount)
 
         cpo.insert(
             ignore_permissions=True,

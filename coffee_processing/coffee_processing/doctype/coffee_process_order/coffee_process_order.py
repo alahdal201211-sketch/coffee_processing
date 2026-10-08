@@ -829,7 +829,10 @@ class CoffeeProcessOrder(Document):
             self.operation
         )
 
-        method = operation.cost_allocation_method
+        method = (
+            getattr(self, "cost_allocation_method", None)
+            or operation.cost_allocation_method
+        )
 
         if not method:
             frappe.throw(
@@ -1048,7 +1051,7 @@ class CoffeeProcessOrder(Document):
         # QUANTITY BASED
         # =====================================================
 
-        if method == "Quantity Based":
+        if method in ("Same Input Cost", "Quantity Based"):
 
             total_qty = sum(
                 flt(row.stock_qty)
@@ -1726,6 +1729,61 @@ class CoffeeProcessOrder(Document):
             else:
                 batch.save(ignore_permissions=True)
 
+            # ---------------------------------------------------------
+            # MULTI-INPUT TRACEABILITY
+            # ---------------------------------------------------------
+            # When one processing operation consumes multiple Coffee
+            # Batches, parent_batch cannot represent the complete
+            # lineage because it stores only one parent.
+            #
+            # Coffee Batch Source is the existing child table designed
+            # for this purpose. Record every consumed input against
+            # every actual output.
+            #
+            # The consumed quantity is allocated according to the
+            # output's share of the total output quantity. The source
+            # cost follows the same proportion.
+            if len(input_rows) > 1:
+                total_output_qty = sum(
+                    flt(out_row.qty)
+                    for out_row, _ in output_rows
+                    if flt(out_row.qty) > 0
+                )
+
+                if total_output_qty > 0:
+                    output_share = (
+                        flt(row.qty) / total_output_qty
+                    )
+
+                    for input_row, _input_se_row in input_rows:
+                        source_qty = (
+                            flt(input_row.qty)
+                            * output_share
+                        )
+
+                        source_cost = (
+                            flt(input_row.amount)
+                            * output_share
+                        )
+
+                        if source_qty <= 0:
+                            continue
+
+                        source_row = batch.append(
+                            "source_batches",
+                            {},
+                        )
+
+                        source_row.source_batch = (
+                            input_row.coffee_batch
+                        )
+                        source_row.process_order = self.name
+                        source_row.operation = self.operation
+                        source_row.qty_consumed = source_qty
+                        source_row.cost_amount = source_cost
+
+                    batch.save(ignore_permissions=True)
+
             row.db_set("coffee_batch", batch.name)
 
         # Reduce existing source Coffee Batches only after Stock Entry submission.
@@ -1775,12 +1833,19 @@ class CoffeeProcessOrder(Document):
                 self.stock_entry_status = "Submitted"
                 return self.stock_entry
 
-            frappe.throw(
-                _(
-                    "Stock Entry {0} is already linked to this "
-                    "Process Order but is not submitted."
-                ).format(self.stock_entry)
-            )
+            if existing_status == 2:
+                # The previous Stock Entry is cancelled.
+                # Keep it as a historical record and allow a new one.
+                self.stock_entry = None
+                self.stock_entry_status = None
+
+            else:
+                frappe.throw(
+                    _(
+                        "Stock Entry {0} is already linked to this "
+                        "Process Order but is still in Draft."
+                    ).format(self.stock_entry)
+                )
 
         if not self.inputs:
             frappe.throw(_("No inputs found."))

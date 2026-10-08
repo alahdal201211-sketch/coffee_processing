@@ -101,6 +101,12 @@
    "label": "المدخلات"
   },
   {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "مخزن المصدر",
+   "options": "Warehouse"
+  },
+  {
    "fieldname": "inputs",
    "fieldtype": "Table",
    "label": "دفعات البن الداخلة",
@@ -108,10 +114,23 @@
    "reqd": 1
   },
   {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "مخزن الهدف",
+   "options": "Warehouse"
+  },
+  {
    "fieldname": "input_qty_total",
    "fieldtype": "Float",
    "label": "إجمالي المدخلات (كجم)",
    "read_only": 1
+  },
+  {
+   "fieldname": "cost_allocation_method",
+   "fieldtype": "Select",
+   "label": "طريقة توزيع التكلفة",
+   "options": "Same Input Cost\nQuantity Based\nRelative Sales Value\nBy-Product Credit\nHybrid\nManual",
+   "default": "Same Input Cost"
   },
   {
    "fieldname": "section_machine",

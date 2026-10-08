@@ -31,9 +31,17 @@ class CoffeePeelingService(Document):
         total_cost=0 if self.service_type=='Customer Service' else total_input_cost+process_cost
         costable=[r for r in self.outputs if r.output_type!='Loss']
         qty_total=sum(flt(r.qty) for r in costable)
+        method=getattr(self, "cost_allocation_method", None) or "Same Input Cost"
         for r in costable:
-            r.valuation_rate=(total_cost*flt(r.qty)/qty_total/flt(r.qty)) if qty_total and self.service_type!='Customer Service' else 0
-            r.amount=flt(r.qty)*flt(r.valuation_rate)
+            if self.service_type=='Customer Service':
+                rate=0
+            elif method=="Manual":
+                rate=flt(r.valuation_rate)
+                if rate<=0: frappe.throw(_("يجب إدخال تكلفة يدوية أكبر من صفر للمخرج {0}.").format(r.item))
+            else:
+                rate=(total_cost/qty_total) if qty_total else 0
+            r.valuation_rate=rate
+            r.amount=flt(r.qty)*rate
         stock_outputs=[]
         for r in self.outputs:
             if r.output_type=='Loss': continue

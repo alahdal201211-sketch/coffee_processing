@@ -1,0 +1,23 @@
+{
+  "company": "الاهدل للبن",
+  "branch": "الرئيسي - الاهدل للبن",
+  "fermentation": {
+    "count": 245,
+    "capacity_kg": 160,
+    "warehouse": "CFW - مخزن التخمير - الاهدل للبن - بن1",
+    "storage_type": "Fermentation Barrel",
+    "doctype": "Coffee Fermentation Barrel",
+    "prefix": "BARREL",
+    "status": "متاح"
+  },
+  "drying": {
+    "count": 320,
+    "capacity_kg": 50,
+    "warehouse": "CDW - مخزن التجفيف - الاهدل للبن - بن1",
+    "storage_type": "Drying Bed",
+    "doctype": "Coffee Drying Bed",
+    "prefix": "BED",
+    "status": "متاح",
+    "bed_type": "شمس"
+  }
+}

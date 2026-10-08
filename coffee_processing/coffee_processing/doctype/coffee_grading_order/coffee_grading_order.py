@@ -4,41 +4,28 @@ from frappe.model.document import Document
 from frappe.utils import flt
 
 class CoffeeGradingOrder(Document):
-
     def validate(self):
-        if not self.inputs:
-            frappe.throw(_("يجب إضافة دفعة إدخال واحدة على الأقل."))
+        from coffee_processing.coffee_processing.services.stage_processing_service import validate_common
+        validate_common(self, "GRADING")
+        for r in self.outputs:
+            grade = getattr(r, "coffee_grade", None) or self.target_grade
+            if not grade:
+                frappe.throw(_("يجب تحديد درجة لكل مخرج في عملية التصنيف."))
+            r.coffee_grade = grade
+        self.quality_result = self.quality_result or "Approved"
+        self.sample_reference = self.sample_reference or self.target_grade or self.name
 
-        if self.outputs:
-            self.input_qty_total = sum(flt(r.qty) for r in self.inputs)
-            self.output_qty_total = sum(flt(r.qty) for r in self.outputs)
-
-            self.loss_qty = max(
-                flt(self.input_qty_total) - flt(self.output_qty_total),
-                0
-            )
-
-            if self.input_qty_total:
-                self.yield_percent = (
-                    flt(self.output_qty_total)
-                    / flt(self.input_qty_total)
-                    * 100
-                )
-
-        self.direct_cost = sum(
-            flt(r.amount) for r in self.costs
-        )
-
-        self.total_cost = (
-            flt(self.direct_cost)
-            + flt(self.overhead_cost)
-        )
-
-        if self.output_qty_total:
-            self.cost_per_kg = (
-                flt(self.total_cost)
-                / flt(self.output_qty_total)
-            )
+    def before_submit(self):
+        from coffee_processing.coffee_processing.services.stage_processing_service import create_process_order
+        cpo = create_process_order(self, "GRADING")
+        self.process_order = cpo.name
+        self.stock_entry = cpo.stock_entry
 
     def on_submit(self):
         self.db_set("status", "Completed")
+
+    def on_cancel(self):
+        if self.process_order:
+            cpo=frappe.get_doc("Coffee Process Order",self.process_order)
+            if cpo.docstatus==1: cpo.cancel()
+        self.db_set("status","Cancelled")

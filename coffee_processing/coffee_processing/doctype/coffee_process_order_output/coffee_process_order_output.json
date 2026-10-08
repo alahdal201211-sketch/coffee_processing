@@ -952,6 +952,18 @@
       "doctype": "DocField"
     },
     {
+      "fieldname": "coffee_type",
+      "fieldtype": "Select",
+      "label": "نوع البن",
+      "options": "Specialty\\nCommercial\\nDefects\\nBy-Product\\nMixed"
+    },
+    {
+      "fieldname": "coffee_grade",
+      "fieldtype": "Link",
+      "label": "درجة البن",
+      "options": "Coffee Grade Master"
+    },
+    {
       "name": "37jnloppsh",
       "creation": "2026-09-13 01:11:36.398095",
       "modified": "2026-09-13 01:11:36.398095",
